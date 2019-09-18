@@ -1,0 +1,90 @@
+//
+// SKViewController.swift
+// ScanKit
+//
+// Create by wooseng with company's MackBook Pro on 2019/9/18.
+// Copyright © 2019 残无殇. All rights reserved.
+//
+// 扫描框架主控制器
+//
+// 1. 可以对其进行设置后直接使用
+// 2. 可以继承此控制器后使用
+
+import UIKit
+
+open class SKViewController: UIViewController {
+    
+    // 扫描视图控件
+    public private(set) var scanView: SKView?
+
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = UIColor.black
+        SKPermission.authorizeCamera {
+            if $0 {
+                self.setupScanView()
+            } else {
+                self.permissionDenied(.camera)
+            }
+        }
+    }
+    
+    open override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        scanView?.stopRunning()
+    }
+    
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        scanView?.startRunning()
+    }
+    
+    /// 权限拒绝后会调用此方法
+    ///
+    /// 默认弹窗提示并支持跳转到系统设置页
+    /// 如果想实现自己逻辑或者弹窗样式，可以重写此方法(重写的话不要使用 super 关键词)
+    open func permissionDenied(_ type: SKPermissionType) {
+        let message = type == .camera ? "您没有使用摄像头的权限，是否前往设置？" : "您没有访问相册的权限，是否前往设置？"
+        let alert = UIAlertController(title: "权限提示", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { [weak self] _ in
+            self?.closeCurrentPage()
+        }))
+        alert.addAction(UIAlertAction(title: "打开设置", style: .default, handler: { [weak self] _ in
+            self?.closeCurrentPage()
+            SKPermission.openSystemSeting()
+        }))
+        present(alert, animated: true, completion: nil)
+    }
+    
+}
+
+//MARK: - 私有方法
+private extension SKViewController {
+    
+    // 关闭当前页面
+    func closeCurrentPage() {
+        guard let nav = navigationController, nav.viewControllers.first != self else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        nav.popViewController(animated: true)
+    }
+    
+    // 设置扫描视图控件
+    func setupScanView() {
+        if scanView != nil {
+            scanView?.removeFromSuperview()
+        }
+        let scanView = SKView()
+        scanView.frame = view.bounds
+        scanView.scanCallback = { [weak self] data in
+            self?.closeCurrentPage()
+            print("扫码结果:", data)
+        }
+        view.addSubview(scanView)
+        self.scanView = scanView
+        scanView.startRunning()
+        
+    }
+    
+}
