@@ -56,6 +56,11 @@ open class SKViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scanView?.frame = view.bounds
+    }
+    
 }
 
 //MARK: - 私有方法

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4C60AB262367341800E8E0AB /* SKLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB252367341800E8E0AB /* SKLog.swift */; };
 		4C60AB282367397D00E8E0AB /* SKConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB272367397D00E8E0AB /* SKConstants.swift */; };
+		4C60AB3023673CE600E8E0AB /* SKScanArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB2F23673CE600E8E0AB /* SKScanArea.swift */; };
 		94A4307D23321FD600DE27CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307C23321FD600DE27CB /* AppDelegate.swift */; };
 		94A4307F23321FD600DE27CB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307E23321FD600DE27CB /* ViewController.swift */; };
 		94A4308223321FD600DE27CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 94A4308023321FD600DE27CB /* Main.storyboard */; };
@@ -45,6 +46,7 @@
 /* Begin PBXFileReference section */
 		4C60AB252367341800E8E0AB /* SKLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKLog.swift; sourceTree = "<group>"; };
 		4C60AB272367397D00E8E0AB /* SKConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKConstants.swift; sourceTree = "<group>"; };
+		4C60AB2F23673CE600E8E0AB /* SKScanArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKScanArea.swift; sourceTree = "<group>"; };
 		94A4307923321FD600DE27CB /* ScanKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScanKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A4307C23321FD600DE27CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		94A4307E23321FD600DE27CB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				94A430BA2332324100DE27CB /* SKScanWrapper.swift */,
 				4C60AB252367341800E8E0AB /* SKLog.swift */,
 				4C60AB272367397D00E8E0AB /* SKConstants.swift */,
+				4C60AB2F23673CE600E8E0AB /* SKScanArea.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 			files = (
 				94A430B22332210B00DE27CB /* SKView.swift in Sources */,
 				94A430B4233223C900DE27CB /* SKPermission.swift in Sources */,
+				4C60AB3023673CE600E8E0AB /* SKScanArea.swift in Sources */,
 				94A430B62332293000DE27CB /* SKEnum.swift in Sources */,
 				94A4307F23321FD600DE27CB /* ViewController.swift in Sources */,
 				94A4307D23321FD600DE27CB /* AppDelegate.swift in Sources */,
