@@ -72,6 +72,9 @@ private extension SKViewController {
     
     // 设置扫描视图控件
     func setupScanView() {
+        #if targetEnvironment(simulator)
+        SKLogError("此框架暂不支持模拟器")
+        #else
         if scanView != nil {
             scanView?.removeFromSuperview()
         }
@@ -79,12 +82,12 @@ private extension SKViewController {
         scanView.frame = view.bounds
         scanView.scanCallback = { [weak self] data in
             self?.closeCurrentPage()
-            print("扫码结果:", data)
+            SKLogPlain("扫码结果", data)
         }
         view.addSubview(scanView)
         self.scanView = scanView
         scanView.startRunning()
-        
+        #endif
     }
     
 }
