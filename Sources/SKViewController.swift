@@ -14,9 +14,9 @@ import UIKit
 
 open class SKViewController: UIViewController {
     
-    // 扫描视图控件
+    /// 扫描视图控件
     public private(set) var scanView: SKView?
-
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
@@ -39,6 +39,11 @@ open class SKViewController: UIViewController {
         scanView?.startRunning()
     }
     
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scanView?.frame = view.bounds
+    }
+    
     /// 权限拒绝后会调用此方法
     ///
     /// 默认弹窗提示并支持跳转到系统设置页
@@ -56,10 +61,9 @@ open class SKViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    open override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        scanView?.frame = view.bounds
-    }
+    // 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
+    // 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
+    open func didScanViewSetupFinsh() { }
     
 }
 
@@ -92,6 +96,7 @@ private extension SKViewController {
         view.addSubview(scanView)
         self.scanView = scanView
         scanView.startRunning()
+        didScanViewSetupFinsh()
         #endif
     }
     

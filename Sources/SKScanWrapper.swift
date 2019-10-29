@@ -108,7 +108,7 @@ private extension SKScanWrapper {
         }
         
         // 设置数据输出类型(如下设置为条形码和二维码兼容)，需要将数据输出添加到会话后，才能指定元数据类型，否则会报错
-        output.metadataObjectTypes = [.qr, .ean13, .ean8, .code128]
+        output.metadataObjectTypes = [.qr, .ean13, .ean8, .code128, .dataMatrix]
     }
     
     // 设置摄像数据输出流 (用于识别光线强弱)

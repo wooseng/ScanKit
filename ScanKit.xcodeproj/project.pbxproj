@@ -10,6 +10,7 @@
 		4C60AB262367341800E8E0AB /* SKLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB252367341800E8E0AB /* SKLog.swift */; };
 		4C60AB282367397D00E8E0AB /* SKConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB272367397D00E8E0AB /* SKConstants.swift */; };
 		4C60AB3023673CE600E8E0AB /* SKScanArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C60AB2F23673CE600E8E0AB /* SKScanArea.swift */; };
+		940D68D52368554000776162 /* SKAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D68D42368554000776162 /* SKAnimationView.swift */; };
 		94A4307D23321FD600DE27CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307C23321FD600DE27CB /* AppDelegate.swift */; };
 		94A4307F23321FD600DE27CB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307E23321FD600DE27CB /* ViewController.swift */; };
 		94A4308223321FD600DE27CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 94A4308023321FD600DE27CB /* Main.storyboard */; };
@@ -47,6 +48,7 @@
 		4C60AB252367341800E8E0AB /* SKLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKLog.swift; sourceTree = "<group>"; };
 		4C60AB272367397D00E8E0AB /* SKConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKConstants.swift; sourceTree = "<group>"; };
 		4C60AB2F23673CE600E8E0AB /* SKScanArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKScanArea.swift; sourceTree = "<group>"; };
+		940D68D42368554000776162 /* SKAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKAnimationView.swift; sourceTree = "<group>"; };
 		94A4307923321FD600DE27CB /* ScanKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScanKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A4307C23321FD600DE27CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		94A4307E23321FD600DE27CB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				94A430AF233220F200DE27CB /* SKViewController.swift */,
+				940D68D42368554000776162 /* SKAnimationView.swift */,
 				94A430B12332210B00DE27CB /* SKView.swift */,
 				94A430B3233223C900DE27CB /* SKPermission.swift */,
 				94A430B52332293000DE27CB /* SKEnum.swift */,
@@ -298,6 +301,7 @@
 			files = (
 				94A430B22332210B00DE27CB /* SKView.swift in Sources */,
 				94A430B4233223C900DE27CB /* SKPermission.swift in Sources */,
+				940D68D52368554000776162 /* SKAnimationView.swift in Sources */,
 				4C60AB3023673CE600E8E0AB /* SKScanArea.swift in Sources */,
 				94A430B62332293000DE27CB /* SKEnum.swift in Sources */,
 				94A4307F23321FD600DE27CB /* ViewController.swift in Sources */,
