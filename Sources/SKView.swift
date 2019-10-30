@@ -45,6 +45,10 @@ public class SKView: UIView {
         animateView.frame = scanAreaRect
     }
     
+    deinit {
+        SKLogWarn("deinit:", self.classForCoder)
+    }
+    
 }
 
 public extension SKView {

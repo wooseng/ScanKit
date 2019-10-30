@@ -32,6 +32,10 @@ public class SKScanWrapper: NSObject {
     
     // 预览视图的容器
     private weak var _container: UIView?
+    
+    deinit {
+        SKLogWarn("deinit:", self.classForCoder)
+    }
 }
 
 //MARK: - 公开方法
@@ -54,15 +58,17 @@ public extension SKScanWrapper {
     
     // 开始运行扫描器
     func startRunning() {
-        if !_isInitialized {
-            setupDeviceInput()
-            setupMetadataOutput()
-            setupVideoDataOutput()
-            setupPreviewLayer()
-            _isInitialized = true
-        }
-        if !_session.isRunning {
-            _session.startRunning()
+        DispatchQueue.main.async {
+            if !self._isInitialized {
+                self.setupDeviceInput()
+                self.setupMetadataOutput()
+                self.setupVideoDataOutput()
+                self.setupPreviewLayer()
+                self._isInitialized = true
+            }
+            if !self._session.isRunning {
+                self._session.startRunning()
+            }
         }
     }
     

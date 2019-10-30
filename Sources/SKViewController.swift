@@ -76,6 +76,10 @@ open class SKViewController: UIViewController {
         scanCallback?(results)
     }
     
+    deinit {
+        SKLogWarn("deinit:", self.classForCoder)
+    }
+    
 }
 
 //MARK: - 私有方法

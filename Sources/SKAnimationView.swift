@@ -63,4 +63,9 @@ public class SKAnimationView: UIView {
         cornerColor.set()
         path.stroke()
     }
+    
+    deinit {
+        SKLogWarn("deinit:", self.classForCoder)
+    }
+    
 }
