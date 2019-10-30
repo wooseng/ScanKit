@@ -74,8 +74,11 @@ public extension SKScanWrapper {
     
     // 停止运行扫描器
     func stopRunning() {
-        if _session.isRunning {
-            _session.stopRunning()
+        guard _session.isRunning else {
+            return
+        }
+        DispatchQueue.main.async {
+            self._session.stopRunning()
         }
     }
     
