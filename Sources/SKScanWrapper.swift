@@ -15,7 +15,7 @@ import AVFoundation
 public class SKScanWrapper: NSObject {
 
     // 扫描结果的回调
-    public var scanCallback: (([AVMetadataObject]) -> Void)?
+    public var scanCallback: (([SKResult]) -> Void)?
     
     // 会话对象
     private lazy var _session: AVCaptureSession = {
@@ -108,7 +108,7 @@ private extension SKScanWrapper {
         }
         
         // 设置数据输出类型(如下设置为条形码和二维码兼容)，需要将数据输出添加到会话后，才能指定元数据类型，否则会报错
-        output.metadataObjectTypes = [.qr, .ean13, .ean8, .code128, .dataMatrix]
+        output.metadataObjectTypes = [.qr, .ean13, .ean8, .code93, .code128, .dataMatrix, .code39, .code39Mod43, .aztec]
     }
     
     // 设置摄像数据输出流 (用于识别光线强弱)
@@ -142,7 +142,10 @@ extension SKScanWrapper: AVCaptureMetadataOutputObjectsDelegate {
     public func metadataOutput(_ output: AVCaptureMetadataOutput,
                                didOutput metadataObjects: [AVMetadataObject],
                                from connection: AVCaptureConnection) {
-        scanCallback?(metadataObjects)
+        let result = metadataObjects.map {
+            SKResult($0)
+        }
+        scanCallback?(result)
     }
     
 }

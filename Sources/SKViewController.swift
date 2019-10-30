@@ -17,6 +17,9 @@ open class SKViewController: UIViewController {
     /// 扫描视图控件
     public private(set) var scanView: SKView?
     
+    /// 扫描成功的回调，如果是继承此类，则重载相关方法即可
+    public var scanCallback: (([SKResult]) -> Void)?
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
@@ -61,9 +64,17 @@ open class SKViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    // 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
-    // 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
+    /// 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
+    /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
     open func didScanViewSetupFinsh() { }
+    
+    /// 扫码完成会执行此方法
+    /// 如果继承此视图控制器，可以重载此方法，然后实现自己的逻辑
+    /// 如果直接使用此视图控制器，则可以选择实现回调闭包函数 scanCallback
+    open func didScanFinshed(_ results: [SKResult]) {
+        closeCurrentPage()
+        scanCallback?(results)
+    }
     
 }
 
@@ -89,9 +100,8 @@ private extension SKViewController {
         }
         let scanView = SKView()
         scanView.frame = view.bounds
-        scanView.scanCallback = { [weak self] data in
-            self?.closeCurrentPage()
-            SKLogPlain("扫码结果", data)
+        scanView.scanCallback = { [weak self] results in
+            self?.didScanFinshed(results)
         }
         view.addSubview(scanView)
         self.scanView = scanView

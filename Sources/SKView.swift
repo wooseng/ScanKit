@@ -14,8 +14,8 @@ import AVFoundation
 
 public class SKView: UIView {
     
-    // 扫描结果的回调
-    public var scanCallback: (([AVMetadataObject]) -> Void)?
+    /// 扫描结果的回调
+    public var scanCallback: (([SKResult]) -> Void)?
     public var scanArea = SKScanArea()
     public var animateView = SKAnimationView()
 
@@ -49,18 +49,22 @@ public class SKView: UIView {
 
 public extension SKView {
     
-    // 开始运行扫描器
+    /// 开始运行扫描器
     func startRunning() {
         _wrapper.scanCallback = scanCallback
         _wrapper.startRunning()
     }
     
-    // 停止运行扫描器
+    /// 停止运行扫描器
     func stopRunning() {
         _wrapper.stopRunning()
     }
     
-    /// 扫描区域
+}
+
+private extension SKView {
+    
+    // 扫描区域
     var scanAreaRect: CGRect {
         let areaCenter = CGPoint(x: center.x, y: center.y + scanArea.offsetY)
         let width = scanArea.width
@@ -71,4 +75,3 @@ public extension SKView {
     }
     
 }
-
