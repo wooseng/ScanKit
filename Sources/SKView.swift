@@ -16,7 +16,12 @@ public class SKView: UIView {
     
     /// 扫描结果的回调
     public var scanCallback: (([SKResult]) -> Void)?
-    public var scanArea = SKScanArea()
+    public var scanArea = SKScanArea() {
+        didSet {
+            animateView.scanArea = scanArea
+            setNeedsLayout()
+        }
+    }
     public var animateView = SKAnimationView()
 
     public override init(frame: CGRect) {

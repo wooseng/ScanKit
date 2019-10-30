@@ -12,7 +12,11 @@ import UIKit
 
 public class SKAnimationView: UIView {
 
-    public var scanArea = SKScanArea()
+    public var scanArea = SKScanArea() {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     
     public override func draw(_ rect: CGRect) {
         

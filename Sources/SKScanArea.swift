@@ -12,6 +12,8 @@ import UIKit
 
 public struct SKScanArea {
     
+    public init() { }
+    
     public var width: CGFloat = 200
     public var height: CGFloat = 200
     

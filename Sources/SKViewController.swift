@@ -20,6 +20,9 @@ open class SKViewController: UIViewController {
     /// 扫描成功的回调，如果是继承此类，则重载相关方法即可
     public var scanCallback: (([SKResult]) -> Void)?
     
+    /// 扫描完成后自动停止，默认 true
+    public var stopAfterScanFinshed = true
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
@@ -84,6 +87,15 @@ open class SKViewController: UIViewController {
 //MARK: - 私有方法
 private extension SKViewController {
     
+    // 扫描完成调用的私有方法
+    func _didScanFinshed(_ results: [SKResult]) {
+        if stopAfterScanFinshed {
+            scanView?.stopRunning()
+        }
+        scanCallback?(results)
+        didScanFinshed(results)
+    }
+    
     // 关闭当前页面
     func closeCurrentPage() {
         guard let nav = navigationController, nav.viewControllers.first != self else {
@@ -103,10 +115,7 @@ private extension SKViewController {
         }
         let scanView = SKView()
         scanView.frame = view.bounds
-        scanView.scanCallback = { [weak self] results in
-            self?.scanCallback?(results)
-            self?.didScanFinshed(results)
-        }
+        scanView.scanCallback = _didScanFinshed(_:)
         view.addSubview(scanView)
         self.scanView = scanView
         scanView.startRunning()
