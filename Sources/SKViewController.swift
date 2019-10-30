@@ -73,7 +73,6 @@ open class SKViewController: UIViewController {
     /// 如果直接使用此视图控制器，则可以选择实现回调闭包函数 scanCallback
     open func didScanFinshed(_ results: [SKResult]) {
         closeCurrentPage()
-        scanCallback?(results)
     }
     
     deinit {
@@ -105,6 +104,7 @@ private extension SKViewController {
         let scanView = SKView()
         scanView.frame = view.bounds
         scanView.scanCallback = { [weak self] results in
+            self?.scanCallback?(results)
             self?.didScanFinshed(results)
         }
         view.addSubview(scanView)
