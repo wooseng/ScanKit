@@ -12,15 +12,40 @@
 import UIKit
 import AVFoundation
 
-public class SKScanWrapper: NSObject {
+internal class SKScanWrapper: NSObject {
 
     // 扫描结果的回调
-    public var scanCallback: (([SKResult]) -> Void)?
+    internal var scanCallback: (([SKResult]) -> Void)?
     
     // 会话对象
     private lazy var _session: AVCaptureSession = {
         let temp = AVCaptureSession()
         temp.sessionPreset = .hd1920x1080 // 设置会话采集率
+        return temp
+    }()
+    
+    private lazy var _inputDevice = AVCaptureDevice.default(for: .video)
+    private lazy var _input: AVCaptureDeviceInput? = {
+        guard let device = _inputDevice,
+            let input = try? AVCaptureDeviceInput(device: device) else {
+            return nil
+        }
+        return input
+    }()
+    
+    // 元数据输出流
+    private lazy var _metadataOutput: AVCaptureMetadataOutput = {
+        let temp = AVCaptureMetadataOutput()
+        temp.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+        // 设置扫描范围（每一个取值0～1，以屏幕右上角为坐标原点）
+        temp.rectOfInterest = CGRect(x: 0, y: 0, width: 1, height: 1)
+        return temp
+    }()
+    
+    // 摄像数据输出流 (用于识别光线强弱)
+    private lazy var _videoDataOutput: AVCaptureVideoDataOutput = {
+        let temp = AVCaptureVideoDataOutput()
+        temp.setSampleBufferDelegate(self, queue: DispatchQueue.main)
         return temp
     }()
     
@@ -39,9 +64,9 @@ public class SKScanWrapper: NSObject {
 }
 
 //MARK: - 公开方法
-public extension SKScanWrapper {
+internal extension SKScanWrapper {
     
-    // 设置预览图层的容器
+    /// 设置预览图层的容器
     func setContainer(_ view: UIView) {
         _container = view
         guard let layer = _previewLayer else {
@@ -51,12 +76,12 @@ public extension SKScanWrapper {
         view.layer.insertSublayer(layer, at: 0)
     }
     
-    // 重置预览视图的 Frame
+    /// 重置预览视图的 Frame
     func resize(_ rect: CGRect) {
         _previewLayer?.frame = rect
     }
     
-    // 开始运行扫描器
+    /// 开始运行扫描器
     func startRunning() {
         DispatchQueue.main.async {
             if !self._isInitialized {
@@ -72,7 +97,7 @@ public extension SKScanWrapper {
         }
     }
     
-    // 停止运行扫描器
+    /// 停止运行扫描器
     func stopRunning() {
         guard _session.isRunning else {
             return
@@ -84,49 +109,81 @@ public extension SKScanWrapper {
     
 }
 
+//MARK: - 手电筒相关操作
+internal extension SKScanWrapper {
+    
+    /// 手电筒是否可用
+    var isTorchEnable: Bool {
+        guard let device = _inputDevice else {
+            return false
+        }
+        return device.hasTorch && device.isTorchAvailable
+    }
+    
+    /// 手电筒是否处于关闭状态
+    var isTorchClosed: Bool { _inputDevice?.torchMode == AVCaptureDevice.TorchMode.off }
+    
+    /// 打开手电筒
+    func openTorch() {
+        setTorchMode(.on)
+    }
+    
+    /// 关闭手电筒
+    func closeTorch() {
+        setTorchMode(.off)
+    }
+    
+    /// 切换手电筒状态
+    func switchedTorch() {
+        if isTorchClosed {
+            setTorchMode(.on)
+        } else {
+            setTorchMode(.off)
+        }
+    }
+    
+    // 设置手电筒模式
+    private func setTorchMode(_ mode: AVCaptureDevice.TorchMode) {
+        do {
+            try _inputDevice?.lockForConfiguration()
+            _inputDevice?.torchMode = mode
+            _inputDevice?.unlockForConfiguration()
+        } catch {
+            SKLogError("设置手电筒模式失败")
+        }
+    }
+}
+
 //MARK: - 私有方法
 private extension SKScanWrapper {
     
     // 设置摄像设备输入流
     func setupDeviceInput() {
-        guard let device = AVCaptureDevice.default(for: .video) else {
+        guard let input = _input, _session.canAddInput(input) else {
             return
         }
-        do {
-            let input = try AVCaptureDeviceInput(device: device)
-            if _session.canAddInput(input) {
-                _session.addInput(input)
-            }
-        } catch {
-            return
+        if _session.canAddInput(input) {
+            _session.addInput(input)
         }
     }
     
     // 设置元数据输出流
     func setupMetadataOutput() {
-        let output = AVCaptureMetadataOutput()
-        output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-        
-        // 设置扫描范围（每一个取值0～1，以屏幕右上角为坐标原点）
-        output.rectOfInterest = CGRect(x: 0, y: 0, width: 1, height: 1)
-        
-        
         // 添加元数据输出流到会话对象
-        if _session.canAddOutput(output) {
-            _session.addOutput(output)
+        if _session.canAddOutput(_metadataOutput) {
+            _session.addOutput(_metadataOutput)
         }
         
         // 设置数据输出类型(如下设置为条形码和二维码兼容)，需要将数据输出添加到会话后，才能指定元数据类型，否则会报错
-        output.metadataObjectTypes = [.qr, .ean13, .ean8, .code93, .code128, .dataMatrix, .code39, .code39Mod43, .aztec]
+        _metadataOutput.metadataObjectTypes = [
+            .qr, .ean13, .ean8, .code93, .code128, .dataMatrix, .code39, .code39Mod43, .aztec
+        ]
     }
     
     // 设置摄像数据输出流 (用于识别光线强弱)
     func setupVideoDataOutput() {
-        let output = AVCaptureVideoDataOutput()
-        output.setSampleBufferDelegate(self, queue: DispatchQueue.main)
-        
-        if _session.canAddOutput(output) {
-            _session.addOutput(output)
+        if _session.canAddOutput(_videoDataOutput) {
+            _session.addOutput(_videoDataOutput)
         }
     }
     
@@ -148,7 +205,7 @@ private extension SKScanWrapper {
 extension SKScanWrapper: AVCaptureMetadataOutputObjectsDelegate {
     
     // 扫描获取到的数据输出回调
-    public func metadataOutput(_ output: AVCaptureMetadataOutput,
+    internal func metadataOutput(_ output: AVCaptureMetadataOutput,
                                didOutput metadataObjects: [AVMetadataObject],
                                from connection: AVCaptureConnection) {
         let result = metadataObjects.map {
@@ -161,13 +218,13 @@ extension SKScanWrapper: AVCaptureMetadataOutputObjectsDelegate {
 
 extension SKScanWrapper: AVCaptureVideoDataOutputSampleBufferDelegate {
     
-    public func captureOutput(_ output: AVCaptureOutput,
+    internal func captureOutput(_ output: AVCaptureOutput,
                               didDrop sampleBuffer: CMSampleBuffer,
                               from connection: AVCaptureConnection) {
         
     }
     
-    public func captureOutput(_ output: AVCaptureOutput,
+    internal func captureOutput(_ output: AVCaptureOutput,
                               didOutput sampleBuffer: CMSampleBuffer,
                               from connection: AVCaptureConnection) {
         

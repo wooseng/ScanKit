@@ -71,6 +71,15 @@ open class SKViewController: UIViewController {
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
     open func didScanViewSetupFinsh() { }
     
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        if scanView?.isTorchClosed ?? true {
+            scanView?.openTorch()
+        } else {
+            scanView?.closeTorch()
+        }
+    }
+    
     /// 扫码完成会执行此方法
     /// 如果继承此视图控制器，可以重载此方法，然后实现自己的逻辑
     /// 如果直接使用此视图控制器，则可以选择实现回调闭包函数 scanCallback

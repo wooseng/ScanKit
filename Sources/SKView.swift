@@ -16,13 +16,13 @@ public class SKView: UIView {
     
     /// 扫描结果的回调
     public var scanCallback: (([SKResult]) -> Void)?
+    public var animateView = SKAnimationView()
     public var scanArea = SKScanArea() {
         didSet {
             animateView.scanArea = scanArea
             setNeedsLayout()
         }
     }
-    public var animateView = SKAnimationView()
 
     public override init(frame: CGRect) {
         _wrapper = SKScanWrapper()
@@ -69,6 +69,30 @@ public extension SKView {
         _wrapper.stopRunning()
     }
     
+}
+
+public extension SKView {
+    
+    /// 手电筒是否可用
+    var isTorchEnable: Bool { _wrapper.isTorchEnable }
+    
+    /// 手电筒是否处于关闭状态
+    var isTorchClosed: Bool { _wrapper.isTorchClosed }
+    
+    /// 打开手电筒
+    func openTorch() {
+        _wrapper.openTorch()
+    }
+    
+    /// 关闭手电筒
+    func closeTorch() {
+        _wrapper.closeTorch()
+    }
+    
+    /// 切换手电筒状态
+    func switchedTorch() {
+        _wrapper.switchedTorch()
+    }
 }
 
 private extension SKView {
