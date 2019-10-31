@@ -18,7 +18,11 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        navigationController?.pushViewController(SKViewController(), animated: true)
+        let vc = SKViewController()
+        vc.scanCallback = { results in
+            print("扫描结果", results)
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
 
 }

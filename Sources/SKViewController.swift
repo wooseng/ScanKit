@@ -38,6 +38,7 @@ open class SKViewController: UIViewController {
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         scanView?.stopRunning()
+        scanView?.closeTorch()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -70,15 +71,6 @@ open class SKViewController: UIViewController {
     /// 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
     open func didScanViewSetupFinsh() { }
-    
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        if scanView?.isTorchClosed ?? true {
-            scanView?.openTorch()
-        } else {
-            scanView?.closeTorch()
-        }
-    }
     
     /// 扫码完成会执行此方法
     /// 如果继承此视图控制器，可以重载此方法，然后实现自己的逻辑
