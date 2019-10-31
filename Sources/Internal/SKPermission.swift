@@ -13,7 +13,7 @@ import UIKit
 import AVFoundation
 import Photos
 
-struct SKPermission {
+internal struct SKPermission {
     
     // 相机权限
     static func authorizeCamera(_ complete: @escaping (Bool) -> Void) {
