@@ -13,12 +13,18 @@ import UIKit
 import AVFoundation
 
 internal class SKScanWrapper: NSObject {
-
-    // 扫描结果的回调
-    internal var scanCallback: (([SKResult]) -> Void)?
     
-    // 会话对象
-    private lazy var _session: AVCaptureSession = {
+    internal var scanCallback: (([SKResult]) -> Void)? // 扫描结果的回调
+    internal var wrapperStateDidChange: ((SKScanWrapperState) -> Void)? // 扫描器状态改变的回调
+    internal private(set) var wrapperState = SKScanWrapperState.normal { // 扫描器的状态
+        didSet {
+            wrapperStateDidChange?(wrapperState)
+        }
+    }
+    
+    private var _previewLayer: AVCaptureVideoPreviewLayer? // 预览视图
+    private weak var _container: UIView? // 预览视图的容器
+    private lazy var _session: AVCaptureSession = { // 会话对象
         let temp = AVCaptureSession()
         temp.sessionPreset = .hd1920x1080 // 设置会话采集率
         return temp
@@ -49,15 +55,6 @@ internal class SKScanWrapper: NSObject {
         return temp
     }()
     
-    // 预览视图
-    private var _previewLayer: AVCaptureVideoPreviewLayer?
-    
-    // 是否已经执行过初始化操作
-    private var _isInitialized = false
-    
-    // 预览视图的容器
-    private weak var _container: UIView?
-    
     deinit {
         SKLogWarn("deinit:", self.classForCoder)
     }
@@ -79,31 +76,39 @@ internal extension SKScanWrapper {
     /// 重置预览视图的 Frame
     func resize(_ rect: CGRect) {
         _previewLayer?.frame = rect
+        SKLogPlain("重置预览视图Rect")
     }
     
     /// 开始运行扫描器
+    /// 如果开始运行的时候，会话并没有启动，则会先进行启动
+    /// 如果要监控启动的状态，可以设置状态回调的闭包 wrapperStateDidChange
     func startRunning() {
         DispatchQueue.main.async {
-            if !self._isInitialized {
+            if self.wrapperState == .normal {
+                self.wrapperState = .loading
                 self.setupDeviceInput()
                 self.setupMetadataOutput()
                 self.setupVideoDataOutput()
                 self.setupPreviewLayer()
-                self._isInitialized = true
+                self.wrapperState = .loaded
             }
-            if !self._session.isRunning {
+            if self.canStartRunning {
+                self.wrapperState = .starting
                 self._session.startRunning()
+                self.wrapperState = .started
             }
         }
     }
     
     /// 停止运行扫描器
     func stopRunning() {
-        guard _session.isRunning else {
+        guard canStopRunning else {
             return
         }
+        wrapperState = .stoping
         DispatchQueue.main.async {
             self._session.stopRunning()
+            self.wrapperState = .stoped
         }
     }
     
@@ -151,6 +156,20 @@ internal extension SKScanWrapper {
         } catch {
             SKLogError("设置手电筒模式失败")
         }
+    }
+}
+
+//MARK: - 私有计算属性
+private extension SKScanWrapper {
+    
+    // 会话是否可以启动运行
+    var canStartRunning: Bool {
+        return !_session.isRunning && (wrapperState == .loaded || wrapperState == .stoped)
+    }
+    
+    // 会话是否可以停止运行
+    var canStopRunning: Bool {
+        return _session.isRunning && wrapperState == .started
     }
 }
 

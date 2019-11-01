@@ -8,12 +8,13 @@
 
 
 import UIKit
+import Sources
 
-//class ScanViewController: SKViewController {
-//
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//    }
-//    
-//}
+class ScanViewController: SKViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+    
+}

@@ -25,7 +25,7 @@ open class SKViewController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor.white
         SKPermission.authorizeCamera {
             if $0 {
                 self.setupScanView()

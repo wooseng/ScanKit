@@ -16,21 +16,26 @@ public class SKView: UIView {
     
     /// 扫描结果的回调
     public var scanCallback: (([SKResult]) -> Void)?
-    public var animateView = SKAnimationView()
+    public private(set) lazy var animateView = SKAnimationView()
     public var scanArea = SKScanArea() {
         didSet {
             animateView.scanArea = scanArea
             setNeedsLayout()
         }
     }
-
+    
+    private lazy var _wrapper = SKScanWrapper()
+    private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
+    
     public override init(frame: CGRect) {
-        _wrapper = SKScanWrapper()
         super.init(frame: frame)
-        _wrapper.setContainer(self)
+        setupWrapper()
+        
         animateView.backgroundColor = UIColor.clear
         animateView.scanArea = scanArea
         addSubview(animateView)
+        
+        addSubview(_loadingIndicatorView)
     }
     
     public convenience init() {
@@ -41,13 +46,11 @@ public class SKView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let _wrapper: SKScanWrapper
-    private let _animateLayer = CALayer()
-    
     public override func layoutSubviews() {
         super.layoutSubviews()
         _wrapper.resize(self.bounds)
         animateView.frame = scanAreaRect
+        _loadingIndicatorView.center = center
     }
     
     deinit {
@@ -105,6 +108,26 @@ private extension SKView {
         let minX = areaCenter.x - width / 2
         let minY = areaCenter.y - height / 2
         return CGRect(x: minX, y: minY, width: width, height: height)
+    }
+    
+    // 设置扫描器
+    func setupWrapper() {
+        _wrapper.setContainer(self)
+        _wrapper.wrapperStateDidChange = { [weak self] in
+            SKLogPlain("扫描器状态", $0)
+            switch $0 {
+            case .loading, .starting, .stoping:
+                if !(self?._loadingIndicatorView.isAnimating ?? false) {
+                    self?._loadingIndicatorView.startAnimating()
+                    self?._loadingIndicatorView.isHidden = false
+                }
+            default:
+                if self?._loadingIndicatorView.isAnimating ?? false {
+                    self?._loadingIndicatorView.stopAnimating()
+                    self?._loadingIndicatorView.isHidden = true
+                }
+            }
+        }
     }
     
 }

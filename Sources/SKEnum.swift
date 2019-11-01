@@ -17,6 +17,34 @@ public enum SKPermissionType {
     case camera // 相机
 }
 
+/// 扫描器的状态
+internal enum SKScanWrapperState {
+    
+    /// 正常状态，扫描器加载前是这种状态
+    case normal
+    
+    /// 正在加载中
+    case loading
+    
+    /// 已经加载完成
+    case loaded
+    
+    /// 正在启动
+    case starting
+    
+    /// 已经启动
+    case started
+    
+    /// 正在停止
+    case stoping
+    
+    /// 已经停止
+    case stoped
+    
+    /// 未知状态，一般是加载失败会被设置为这个状态
+    case unknow
+}
+
 /// 扫码数据的类型（暂时没有使用）
 public enum SKResultType {
     
