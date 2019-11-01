@@ -23,9 +23,12 @@ open class SKViewController: UIViewController {
     /// 扫描完成后自动停止，默认 true
     public var stopAfterScanFinshed = true
     
+    open override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait }
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.black
         SKPermission.authorizeCamera {
             if $0 {
                 self.setupScanView()
@@ -72,6 +75,12 @@ open class SKViewController: UIViewController {
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
     open func didScanViewSetupFinsh() { }
     
+    /// 扫描启动完成后会调用此方法
+    open func didScanStartRunning() { }
+    
+    /// 扫描停止后会调用此方法
+    open func didScanStopRunning() { }
+    
     /// 扫码完成会执行此方法
     /// 如果继承此视图控制器，可以重载此方法，然后实现自己的逻辑
     /// 如果直接使用此视图控制器，则可以选择实现回调闭包函数 scanCallback
@@ -117,6 +126,8 @@ private extension SKViewController {
         let scanView = SKView()
         scanView.frame = view.bounds
         scanView.scanCallback = _didScanFinshed(_:)
+        scanView.scanDidStartRunning = didScanStartRunning
+        scanView.scanDidStopRunning = didScanStopRunning
         view.addSubview(scanView)
         self.scanView = scanView
         scanView.startRunning()

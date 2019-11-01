@@ -14,8 +14,14 @@ import AVFoundation
 
 public class SKView: UIView {
     
-    /// 扫描结果的回调
-    public var scanCallback: (([SKResult]) -> Void)?
+    public var scanCallback: (([SKResult]) -> Void)? // 扫描器扫描到结果后会使用此闭包进行回调
+    public var scanDidStartRunning: (() -> Void)? // 扫描器启动扫描后会使用此闭包进行回调
+    public var scanDidStopRunning: (() -> Void)? // 扫描器停止扫描后会使用此闭包进行回调
+    public var isLimitRecognitionArea = false { // 是否限制识别区域
+        didSet {
+            setNeedsLayout()
+        }
+    }
     public private(set) lazy var animateView = SKAnimationView()
     public var scanArea = SKScanArea() {
         didSet {
@@ -48,8 +54,9 @@ public class SKView: UIView {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        _wrapper.resize(self.bounds)
-        animateView.frame = scanAreaRect
+        let area = scanAreaRect
+        _wrapper.resize(bounds, rectOfScan: isLimitRecognitionArea ? area : bounds)
+        animateView.frame = area
         _loadingIndicatorView.center = center
     }
     
@@ -126,6 +133,11 @@ private extension SKView {
                     self?._loadingIndicatorView.stopAnimating()
                     self?._loadingIndicatorView.isHidden = true
                 }
+            }
+            if $0 == .started {
+                self?.scanDidStartRunning?()
+            } else if $0 == .stoped {
+                self?.scanDidStopRunning?()
             }
         }
     }

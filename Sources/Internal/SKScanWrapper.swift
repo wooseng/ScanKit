@@ -24,6 +24,7 @@ internal class SKScanWrapper: NSObject {
     
     private var _previewLayer: AVCaptureVideoPreviewLayer? // 预览视图
     private weak var _container: UIView? // 预览视图的容器
+    private var _scanAreaRect = CGRect.zero // 扫码区域的原始Rect
     private lazy var _session: AVCaptureSession = { // 会话对象
         let temp = AVCaptureSession()
         temp.sessionPreset = .hd1920x1080 // 设置会话采集率
@@ -43,8 +44,8 @@ internal class SKScanWrapper: NSObject {
     private lazy var _metadataOutput: AVCaptureMetadataOutput = {
         let temp = AVCaptureMetadataOutput()
         temp.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-        // 设置扫描范围（每一个取值0～1，以屏幕右上角为坐标原点）
-        temp.rectOfInterest = CGRect(x: 0, y: 0, width: 1, height: 1)
+        // 设置扫描范围（每一个取值0～1，以屏幕左上角为坐标原点）
+        temp.rectOfInterest = rectOfInterest
         return temp
     }()
     
@@ -73,16 +74,30 @@ internal extension SKScanWrapper {
         view.layer.insertSublayer(layer, at: 0)
     }
     
-    /// 重置预览视图的 Frame
-    func resize(_ rect: CGRect) {
-        _previewLayer?.frame = rect
+    /// 重置预览视图的 Rect 和 扫描区域的 Rect
+    func resize(_ rect: CGRect, rectOfScan: CGRect) {
+        guard let layer = _previewLayer else {
+            return
+        }
+        var needResetRectScanArea = false
+        if !layer.frame.equalTo(rect) {
+            layer.frame = rect
+            needResetRectScanArea = true
+        }
+        if !rectOfScan.equalTo(_scanAreaRect) {
+            _scanAreaRect = rectOfScan
+            needResetRectScanArea = true
+        }
         SKLogPlain("重置预览视图Rect")
+        if needResetRectScanArea {
+            resetScanArea(rectOfScan, in: rect)
+        }
     }
     
     /// 开始运行扫描器
     /// 如果开始运行的时候，会话并没有启动，则会先进行启动
     /// 如果要监控启动的状态，可以设置状态回调的闭包 wrapperStateDidChange
-    func startRunning() {
+    func startRunning(_ complete: ((Bool) -> Void)? = nil) {
         DispatchQueue.main.async {
             if self.wrapperState == .normal {
                 self.wrapperState = .loading
@@ -96,19 +111,36 @@ internal extension SKScanWrapper {
                 self.wrapperState = .starting
                 self._session.startRunning()
                 self.wrapperState = .started
+                complete?(true)
+            } else {
+                complete?(false)
             }
         }
     }
     
     /// 停止运行扫描器
-    func stopRunning() {
+    func stopRunning(_ complete: ((Bool) -> Void)? = nil) {
         guard canStopRunning else {
+            complete?(false)
             return
         }
         wrapperState = .stoping
         DispatchQueue.main.async {
             self._session.stopRunning()
             self.wrapperState = .stoped
+            complete?(true)
+        }
+    }
+    
+    /// 重新运行扫描器
+    func restartRunning(_ complete: ((Bool) -> Void)?) {
+        SKLogPlain("重启扫描器")
+        stopRunning { [weak self] stopResult in
+            if stopResult {
+                self?.startRunning(complete)
+            } else {
+                complete?(false)
+            }
         }
     }
     
@@ -171,6 +203,14 @@ private extension SKScanWrapper {
     var canStopRunning: Bool {
         return _session.isRunning && wrapperState == .started
     }
+    
+    // 根据扫描区域的原始Rect计算要赋值的区域
+    var rectOfInterest: CGRect {
+        if _scanAreaRect == .zero {
+             return CGRect(x: 0, y: 0, width: 1, height: 1)
+        }
+        return CGRect(x: 0, y: 0, width: 1, height: 1)
+    }
 }
 
 //MARK: - 私有方法
@@ -217,6 +257,26 @@ private extension SKScanWrapper {
             _previewLayer?.frame = view.bounds
             view.layer.insertSublayer(_previewLayer!, at: 0)
         }
+    }
+    
+    // 重置扫描区域的Rect
+    func resetScanArea(_ rect: CGRect, in superRect: CGRect) {
+        var x = rect.minX / superRect.width
+        var y = rect.minY / superRect.height
+        var width = rect.width / superRect.width
+        var height = rect.height / superRect.height
+        x = max(min(x, 1), 0)
+        y = max(min(y, 1), 0)
+        width = max(min(width, 1), 0)
+        height = max(min(height, 1), 0)
+        
+        _metadataOutput.rectOfInterest = CGRect(x: x, y: y, width: width, height: height)
+        if #available(iOS 13, *) {
+            SKLogPlain("在iOS 13上，重置扫描区域后不需要重启扫描")
+        } else {
+            restartRunning(nil)
+        }
+        SKLogPlain("重置扫描区域的Rect", _metadataOutput.rectOfInterest)
     }
 }
 

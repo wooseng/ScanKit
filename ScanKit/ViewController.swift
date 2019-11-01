@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let vc = SKViewController()
+        let vc = ScanViewController()
         vc.scanCallback = { results in
             print("扫描结果", results)
         }
