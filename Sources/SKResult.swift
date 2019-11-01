@@ -29,7 +29,7 @@ public struct SKResult {
         corner = data.corners
     }
     
-    var description: String {
+    public var description: String {
         let data: [String: Any] = [
             "codeType": codeType ?? "",
             "stringValue": stringValue ?? "",
