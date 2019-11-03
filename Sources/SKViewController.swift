@@ -51,7 +51,6 @@ open class SKViewController: UIViewController {
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scanView?.frame = view.bounds
-        scanView?.scanArea = SKScanArea.alipay()
     }
     
     /// 权限拒绝后会调用此方法
