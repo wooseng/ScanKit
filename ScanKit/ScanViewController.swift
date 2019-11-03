@@ -24,7 +24,6 @@ class ScanViewController: SKViewController {
     
     override func didScanStartRunning() {
         super.didScanStartRunning()
-        scanView?.scanArea.height = view.frame.height / 3 * 2
     }
     
 }

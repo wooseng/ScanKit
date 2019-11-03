@@ -88,6 +88,11 @@ internal extension SKScanWrapper {
             _scanAreaRect = rectOfScan
             needResetRectScanArea = true
         }
+        if let orientation = UIDevice.current.captureVideoOrientation,
+            orientation != _previewLayer?.connection?.videoOrientation {
+            SKLogPlain("预览图层方向改变")
+            _previewLayer?.connection?.videoOrientation = orientation
+        }
         SKLogPlain("重置预览视图Rect")
         if needResetRectScanArea {
             resetScanArea(rectOfScan, in: rect)
@@ -109,9 +114,13 @@ internal extension SKScanWrapper {
             }
             if self.canStartRunning {
                 self.wrapperState = .starting
-                self._session.startRunning()
-                self.wrapperState = .started
-                complete?(true)
+                DispatchQueue.global().async {
+                    self._session.startRunning()
+                    DispatchQueue.main.async {
+                        self.wrapperState = .started
+                        complete?(true)
+                    }
+                }
             } else {
                 complete?(false)
             }
@@ -125,10 +134,12 @@ internal extension SKScanWrapper {
             return
         }
         wrapperState = .stoping
-        DispatchQueue.main.async {
+        DispatchQueue.global().async {
             self._session.stopRunning()
-            self.wrapperState = .stoped
-            complete?(true)
+            DispatchQueue.main.async {
+                self.wrapperState = .stoped
+                complete?(true)
+            }
         }
     }
     

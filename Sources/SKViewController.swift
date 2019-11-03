@@ -23,9 +23,6 @@ open class SKViewController: UIViewController {
     /// 扫描完成后自动停止，默认 true
     public var stopAfterScanFinshed = true
     
-    open override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
-    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait }
-    
     override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black

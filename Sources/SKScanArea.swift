@@ -14,8 +14,8 @@ public struct SKScanArea {
     
     public init() { }
     
-    public var width: CGFloat = 200
-    public var height: CGFloat = 200
+    public var width: CGFloat = 230
+    public var height: CGFloat = 230
     
     //MARK: 边框
     public var borderWidth: CGFloat = 1
@@ -28,5 +28,9 @@ public struct SKScanArea {
     
     /// 基于视图中心沿Y轴方向偏移，如果大于0，则向下偏移，小于0，则向上偏移，默认居中
     public var offsetY: CGFloat = 0
+    
+    //MARK: 非扫码区域的蒙层
+    public var maskColor: UIColor? = UIColor.black
+    public var maskAlpha: CGFloat = 0.5
     
 }

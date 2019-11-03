@@ -27,21 +27,30 @@ public class SKView: UIView {
         didSet {
             animateView.scanArea = scanArea
             setNeedsLayout()
+            setNeedsDisplay()
         }
     }
     
     private lazy var _wrapper = SKScanWrapper()
     private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
+    private lazy var _maskLayer = CAShapeLayer()
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupWrapper()
+        
+        layer.addSublayer(_maskLayer)
         
         animateView.backgroundColor = UIColor.clear
         animateView.scanArea = scanArea
         addSubview(animateView)
         
         addSubview(_loadingIndicatorView)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(orientationDidChange(noti:)),
+                                               name: UIDevice.orientationDidChangeNotification,
+                                               object: nil)
     }
     
     public convenience init() {
@@ -61,7 +70,20 @@ public class SKView: UIView {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self)
         SKLogWarn("deinit:", self.classForCoder)
+    }
+    
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        let path = UIBezierPath(rect: bounds)
+        path.append(UIBezierPath(rect: scanAreaRect))
+        
+        _maskLayer.frame = bounds
+        _maskLayer.fillColor = scanArea.maskColor?.withAlphaComponent(scanArea.maskAlpha).cgColor
+        _maskLayer.fillRule = .evenOdd
+        _maskLayer.path = path.cgPath
     }
     
 }
@@ -140,6 +162,11 @@ private extension SKView {
                 self?.scanDidStopRunning?()
             }
         }
+    }
+    
+    @objc func orientationDidChange(noti: Notification) {
+        setNeedsDisplay()
+        setNeedsLayout()
     }
     
 }
