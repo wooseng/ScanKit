@@ -26,20 +26,21 @@ public class SKView: UIView {
     public var scanArea = SKScanArea() {
         didSet {
             animateView.scanArea = scanArea
+            _maskView.scanArea = scanArea
             setNeedsLayout()
-            setNeedsDisplay()
         }
     }
     
     private lazy var _wrapper = SKScanWrapper()
     private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
-    private lazy var _maskLayer = CAShapeLayer()
+    private lazy var _maskView = SKMaskView()
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupWrapper()
         
-        layer.addSublayer(_maskLayer)
+        _maskView.scanArea = scanArea
+        addSubview(_maskView)
         
         animateView.backgroundColor = UIColor.clear
         animateView.scanArea = scanArea
@@ -67,23 +68,14 @@ public class SKView: UIView {
         _wrapper.resize(bounds, rectOfScan: isLimitRecognitionArea ? area : bounds)
         animateView.frame = area
         _loadingIndicatorView.center = center
+        
+        _maskView.scanAreaRect = area
+        _maskView.frame = bounds
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
         SKLogWarn("deinit:", self.classForCoder)
-    }
-    
-    public override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        
-        let path = UIBezierPath(rect: bounds)
-        path.append(UIBezierPath(rect: scanAreaRect))
-        
-        _maskLayer.frame = bounds
-        _maskLayer.fillColor = scanArea.maskColor?.withAlphaComponent(scanArea.maskAlpha).cgColor
-        _maskLayer.fillRule = .evenOdd
-        _maskLayer.path = path.cgPath
     }
     
 }
@@ -165,8 +157,8 @@ private extension SKView {
     }
     
     @objc func orientationDidChange(noti: Notification) {
-        setNeedsDisplay()
         setNeedsLayout()
+        _maskView.setNeedsDisplay()
     }
     
 }

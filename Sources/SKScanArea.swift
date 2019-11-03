@@ -31,6 +31,9 @@ public struct SKScanArea {
     
     //MARK: 非扫码区域的蒙层
     public var maskColor: UIColor? = UIColor.black
-    public var maskAlpha: CGFloat = 0.5
+    public var maskAlpha: CGFloat = 0.6
+    
+    /// 是否开启非扫码区域使用高斯模糊(如果设置为true，则 maskColor 与 maskAlpha 两个属性将会失效)
+    public var isMaskBlurEnable = false
     
 }

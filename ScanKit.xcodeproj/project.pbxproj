@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9495CB7F236E87700052B926 /* UIDevice+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */; };
+		9495CB81236E9D560052B926 /* SKMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9495CB80236E9D560052B926 /* SKMaskView.swift */; };
 		94A189542369144200BED8DC /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A189532369144200BED8DC /* ScanViewController.swift */; };
 		94A4307D23321FD600DE27CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307C23321FD600DE27CB /* AppDelegate.swift */; };
 		94A4307F23321FD600DE27CB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4307E23321FD600DE27CB /* ViewController.swift */; };
@@ -88,6 +89,7 @@
 
 /* Begin PBXFileReference section */
 		9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
+		9495CB80236E9D560052B926 /* SKMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKMaskView.swift; sourceTree = "<group>"; };
 		94A189532369144200BED8DC /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		94A4307923321FD600DE27CB /* ScanKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScanKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A4307C23321FD600DE27CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				94BA07DB236ADFE3009FBD31 /* SKPermission.swift */,
 				94BA07D0236ADFE2009FBD31 /* SKLog.swift */,
 				9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */,
+				9495CB80236E9D560052B926 /* SKMaskView.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 				94BA07E2236ADFE3009FBD31 /* SKScanWrapper.swift in Sources */,
 				94BA07E7236ADFE3009FBD31 /* SKPermission.swift in Sources */,
 				94BA07E5236ADFE3009FBD31 /* SKResult.swift in Sources */,
+				9495CB81236E9D560052B926 /* SKMaskView.swift in Sources */,
 				94BA07DC236ADFE3009FBD31 /* SKLog.swift in Sources */,
 				94BA07E6236ADFE3009FBD31 /* SKConstants.swift in Sources */,
 				9495CB7F236E87700052B926 /* UIDevice+Orientation.swift in Sources */,
@@ -819,7 +823,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.7;
+				MARKETING_VERSION = 0.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -850,7 +854,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.7;
+				MARKETING_VERSION = 0.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
