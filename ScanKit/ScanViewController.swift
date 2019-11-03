@@ -20,6 +20,11 @@ class ScanViewController: SKViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         scanView?.switchedTorch()
+        if arc4random() % 2 == 0 {
+            scanView?.scanArea = SKScanArea.wechat()
+        } else {
+            scanView?.scanArea = SKScanArea.alipay()
+        }
     }
     
     override func didScanStartRunning() {

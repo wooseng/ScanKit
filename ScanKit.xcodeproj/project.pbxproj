@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		94138D92236EC0610024CDFB /* SKHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94138D91236EC0610024CDFB /* SKHelper.swift */; };
+		94138D94236ED7630024CDFB /* SKAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94138D93236ED7630024CDFB /* SKAssets.xcassets */; };
 		9495CB7F236E87700052B926 /* UIDevice+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */; };
 		9495CB81236E9D560052B926 /* SKMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9495CB80236E9D560052B926 /* SKMaskView.swift */; };
 		94A189542369144200BED8DC /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A189532369144200BED8DC /* ScanViewController.swift */; };
@@ -88,6 +90,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		94138D91236EC0610024CDFB /* SKHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKHelper.swift; sourceTree = "<group>"; };
+		94138D93236ED7630024CDFB /* SKAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SKAssets.xcassets; sourceTree = "<group>"; };
 		9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
 		9495CB80236E9D560052B926 /* SKMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKMaskView.swift; sourceTree = "<group>"; };
 		94A189532369144200BED8DC /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
@@ -173,6 +177,7 @@
 				94BA07D0236ADFE2009FBD31 /* SKLog.swift */,
 				9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */,
 				9495CB80236E9D560052B926 /* SKMaskView.swift */,
+				94138D91236EC0610024CDFB /* SKHelper.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -238,10 +243,11 @@
 		94BA07B4236ADFAB009FBD31 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				94138D93236ED7630024CDFB /* SKAssets.xcassets */,
 				94BA07E8236AE011009FBD31 /* Info.plist */,
 				943F3FF7236AE3D5007D5973 /* Internal */,
-				94BA07D4236ADFE2009FBD31 /* SKAnimationView.swift */,
 				94BA07DA236ADFE3009FBD31 /* SKConstants.swift */,
+				94BA07D4236ADFE2009FBD31 /* SKAnimationView.swift */,
 				94BA07D3236ADFE2009FBD31 /* SKEnum.swift */,
 				94BA07D9236ADFE3009FBD31 /* SKResult.swift */,
 				94BA07D8236ADFE3009FBD31 /* SKScanArea.swift */,
@@ -450,6 +456,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94138D94236ED7630024CDFB /* SKAssets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,6 +505,7 @@
 				94BA07E0236ADFE3009FBD31 /* SKAnimationView.swift in Sources */,
 				94BA07E3236ADFE3009FBD31 /* SKViewController.swift in Sources */,
 				94BA07DF236ADFE3009FBD31 /* SKEnum.swift in Sources */,
+				94138D92236EC0610024CDFB /* SKHelper.swift in Sources */,
 				94BA07E2236ADFE3009FBD31 /* SKScanWrapper.swift in Sources */,
 				94BA07E7236ADFE3009FBD31 /* SKPermission.swift in Sources */,
 				94BA07E5236ADFE3009FBD31 /* SKResult.swift in Sources */,
@@ -811,6 +819,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LM3HW8FY8K;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -823,7 +832,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.8;
+				MARKETING_VERSION = 0.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -842,6 +851,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LM3HW8FY8K;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -854,7 +864,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.8;
+				MARKETING_VERSION = 0.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

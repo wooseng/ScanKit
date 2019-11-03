@@ -12,7 +12,10 @@ import UIKit
 
 public struct SKScanArea {
     
-    public init() { }
+    public init() {
+        width = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 150
+        height = width
+    }
     
     public var width: CGFloat = 230
     public var height: CGFloat = 230
@@ -36,4 +39,29 @@ public struct SKScanArea {
     /// 是否开启非扫码区域使用高斯模糊(如果设置为true，则 maskColor 与 maskAlpha 两个属性将会失效)
     public var isMaskBlurEnable = false
     
+    //MARK: 动画设置
+    public var animationImage: UIImage?
+    public var animationDuration: TimeInterval = 2
+    
+}
+
+//MARK: - 便利生成
+public extension SKScanArea {
+    
+    static func wechat() -> Self {
+        var area = SKScanArea()
+        area.animationImage = SKHelper.image(with: "sk_image_animate_wechat")
+        area.cornerColor = UIColor.green.withAlphaComponent(0.6)
+        area.borderColor = UIColor.gray.withAlphaComponent(0.6)
+        return area
+    }
+
+    static func alipay() -> Self {
+        var area = SKScanArea()
+        area.animationImage = SKHelper.image(with: "sk_image_animate_alipay")
+        area.cornerColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
+        area.borderColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
+        area.cornerWidth = 5
+        return area
+    }
 }

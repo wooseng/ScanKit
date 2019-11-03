@@ -18,6 +18,20 @@ public class SKAnimationView: UIView {
         }
     }
     
+    private lazy var _animationgView = UIImageView()
+    private(set) var isAnimating = false // 是否正在动画
+    private var _willStopAnimating = false // 是否将要停止动画
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+        addSubview(_animationgView)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func draw(_ rect: CGRect) {
         
         // 绘制区域边框
@@ -40,8 +54,66 @@ public class SKAnimationView: UIView {
         
     }
     
+    deinit {
+        SKLogWarn("deinit:", self.classForCoder)
+    }
+    
+}
+
+public extension SKAnimationView {
+    
+    /// 开始动画
+    func startAnimating() {
+        guard !isAnimating else {
+            return
+        }
+        animation()
+    }
+    
+    /// 停止动画
+    func stopAnimating() {
+        guard isAnimating, !_willStopAnimating else {
+            return
+        }
+        _willStopAnimating = true
+    }
+    
+}
+
+private extension SKAnimationView {
+    
+    func animation() {
+        isAnimating = true
+        _animationgView.image = scanArea.animationImage
+        let width = frame.width
+        var height = frame.height
+        if let image = scanArea.animationImage {
+            height = width * image.size.height / image.size.width
+        } else {
+            SKLogError("动画图片获取失败")
+        }
+        _animationgView.frame = CGRect(x: 0, y: -height, width: width, height: height)
+        let targetRect = CGRect(x: 0, y: frame.height - height, width: width, height: height)
+        _animationgView.isHidden = false
+        _animationgView.alpha = 1
+        UIView.animate(withDuration: scanArea.animationDuration, animations: {
+            self._animationgView.frame = targetRect
+        }) { _ in
+            UIView.animate(withDuration: 0.5, animations: {
+                self._animationgView.alpha = 0
+            }) { _ in
+                self._animationgView.isHidden = true
+                if self._willStopAnimating {
+                    self.isAnimating = false
+                } else {
+                    self.animation()
+                }
+            }
+        }
+    }
+    
     // 绘制扫描边框
-    private func drawBox(_ rect: CGRect) {
+    func drawBox(_ rect: CGRect) {
         guard let borderCorlor = scanArea.borderColor else {
             return
         }
@@ -53,7 +125,7 @@ public class SKAnimationView: UIView {
     }
     
     // 绘制四个角
-    private func drawAreaCorner(_ p1: CGPoint, _ p2: CGPoint, _ p3: CGPoint) {
+    func drawAreaCorner(_ p1: CGPoint, _ p2: CGPoint, _ p3: CGPoint) {
         guard let cornerColor = scanArea.cornerColor else {
             return
         }
@@ -68,8 +140,5 @@ public class SKAnimationView: UIView {
         path.stroke()
     }
     
-    deinit {
-        SKLogWarn("deinit:", self.classForCoder)
-    }
     
 }

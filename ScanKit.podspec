@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "ScanKit"
-  spec.version      = "0.0.8"
+  spec.version      = "0.0.9"
   spec.summary      = "Swift扩展框架"
   spec.description  = <<-DESC
 	一个使用Swift开发的二维码扫描框架
@@ -13,6 +13,7 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, "10.0"
   spec.source = { :git => 'https://github.com/wooseng/ScanKit.git', :tag => spec.version }
   spec.source_files  = "Sources/*.swift", "Sources/**/*.swift"
+  spec.resources    = "Sources/SKAssets.xcassets"
   spec.swift_version = '5.0'
   spec.requires_arc = true
 

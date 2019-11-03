@@ -39,16 +39,19 @@ open class SKViewController: UIViewController {
         super.viewWillDisappear(animated)
         scanView?.stopRunning()
         scanView?.closeTorch()
+        scanView?.animateView.stopAnimating()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         scanView?.startRunning()
+        scanView?.animateView.startAnimating()
     }
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scanView?.frame = view.bounds
+        scanView?.scanArea = SKScanArea.alipay()
     }
     
     /// 权限拒绝后会调用此方法
@@ -70,7 +73,9 @@ open class SKViewController: UIViewController {
     
     /// 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
-    open func didScanViewSetupFinsh() { }
+    open func didScanViewSetupFinsh() {
+        scanView?.animateView.startAnimating()
+    }
     
     /// 扫描启动完成后会调用此方法
     open func didScanStartRunning() { }
