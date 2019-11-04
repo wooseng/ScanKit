@@ -45,23 +45,21 @@ public struct SKScanArea {
     
 }
 
-//MARK: - 便利生成
+//MARK: 样式切换
 public extension SKScanArea {
     
-    static func wechat() -> Self {
-        var area = SKScanArea()
-        area.animationImage = SKHelper.image(with: "sk_image_animate_wechat")
-        area.cornerColor = UIColor.green.withAlphaComponent(0.6)
-        area.borderColor = UIColor.gray.withAlphaComponent(0.6)
-        return area
+    /// 将扫描区域样式修改为微信样式
+    mutating func turnIntoWechat() {
+        animationImage = SKHelper.image(with: "sk_image_animate_wechat")
+        cornerColor = UIColor.green.withAlphaComponent(0.6)
+        borderColor = UIColor.gray.withAlphaComponent(0.6)
     }
-
-    static func alipay() -> Self {
-        var area = SKScanArea()
-        area.animationImage = SKHelper.image(with: "sk_image_animate_alipay")
-        area.cornerColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
-        area.borderColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
-        area.cornerWidth = 5
-        return area
+    
+    /// 将扫描区样式修改为支付宝样式
+    mutating func turnIntoAlipay() {
+        animationImage = SKHelper.image(with: "sk_image_animate_alipay")
+        cornerColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
+        borderColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
+        cornerWidth = 5
     }
 }

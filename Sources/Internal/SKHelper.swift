@@ -21,11 +21,6 @@ internal class SKHelper: NSObject {
     }()
     
     static func image(with name: String) -> UIImage? {
-//        var bundle = Bundle(for: self.classForCoder())
-//        if let path = bundle.path(forResource: "SKAssets", ofType: "xcassets"),
-//            let temp = Bundle(path: path) {
-//            bundle = temp
-//        }
         return UIImage(named: name, in: bundle, compatibleWith: nil)
     }
     

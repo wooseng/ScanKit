@@ -74,6 +74,7 @@ open class SKViewController: UIViewController {
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
     open func didScanViewSetupFinsh() {
         scanView?.animateView.startAnimating()
+        scanView?.scanArea.turnIntoAlipay()
     }
     
     /// 扫描启动完成后会调用此方法

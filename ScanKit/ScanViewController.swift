@@ -21,9 +21,9 @@ class ScanViewController: SKViewController {
         super.touchesBegan(touches, with: event)
         scanView?.switchedTorch()
         if arc4random() % 2 == 0 {
-            scanView?.scanArea = SKScanArea.wechat()
+            scanView?.scanArea.turnIntoWechat()
         } else {
-            scanView?.scanArea = SKScanArea.alipay()
+            scanView?.scanArea.turnIntoAlipay()
         }
     }
     
