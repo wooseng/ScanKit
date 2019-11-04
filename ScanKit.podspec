@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "ScanKit"
-  spec.version      = "0.0.11"
+  spec.version      = "0.0.12"
   spec.summary      = "Swift扩展框架"
   spec.description  = <<-DESC
 	一个使用Swift开发的二维码扫描框架

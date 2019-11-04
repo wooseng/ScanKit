@@ -90,7 +90,7 @@ private extension SKAnimationView {
         if let image = scanArea.animationImage {
             height = width * image.size.height / image.size.width
         } else {
-            SKLogError("动画图片获取失败")
+            SKLogWarn("动画图片为空")
         }
         _animationgView.frame = CGRect(x: 0, y: -height, width: width, height: height)
         let targetRect = CGRect(x: 0, y: frame.height - height, width: width, height: height)

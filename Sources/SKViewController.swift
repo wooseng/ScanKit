@@ -127,9 +127,15 @@ private extension SKViewController {
         }
         let scanView = SKView()
         scanView.frame = view.bounds
-        scanView.scanCallback = _didScanFinshed(_:)
-        scanView.scanDidStartRunning = didScanStartRunning
-        scanView.scanDidStopRunning = didScanStopRunning
+        scanView.scanCallback = { [weak self] results in
+            self?._didScanFinshed(results)
+        }
+        scanView.scanDidStartRunning = { [weak self] in
+            self?.didScanStartRunning()
+        }
+        scanView.scanDidStopRunning = { [weak self] in
+            self?.didScanStopRunning()
+        }
         view.addSubview(scanView)
         self.scanView = scanView
         scanView.startRunning()
