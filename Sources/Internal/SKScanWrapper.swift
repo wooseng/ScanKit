@@ -46,7 +46,7 @@ internal class SKScanWrapper: NSObject {
         let temp = AVCaptureMetadataOutput()
         temp.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
         // 设置扫描范围（每一个取值0～1，以屏幕左上角为坐标原点）
-        temp.rectOfInterest = rectOfInterest
+        temp.rectOfInterest = CGRect(x: 0, y: 0, width: 1, height: 1)
         return temp
     }()
     
@@ -89,11 +89,12 @@ internal extension SKScanWrapper {
             _scanAreaRect = rectOfScan
             needResetRectScanArea = true
         }
-        if captureVideoOrientation != _previewLayer?.connection?.videoOrientation {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
-                self._previewLayer?.connection?.videoOrientation = self.captureVideoOrientation
+        if captureVideoOrientation != layer.connection?.videoOrientation {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.35) {
+                layer.connection?.videoOrientation = self.captureVideoOrientation
             }
             SKLogPlain("预览图层方向改变")
+            needResetRectScanArea = false
         }
         SKLogPlain("重置预览视图Rect")
         if needResetRectScanArea {
@@ -216,14 +217,6 @@ private extension SKScanWrapper {
     var canStopRunning: Bool {
         return _session.isRunning && wrapperState == .started
     }
-    
-    // 根据扫描区域的原始Rect计算要赋值的区域
-    var rectOfInterest: CGRect {
-        if _scanAreaRect == .zero {
-             return CGRect(x: 0, y: 0, width: 1, height: 1)
-        }
-        return CGRect(x: 0, y: 0, width: 1, height: 1)
-    }
 }
 
 //MARK: - 私有方法
@@ -282,8 +275,11 @@ private extension SKScanWrapper {
         y = max(min(y, 1), 0)
         width = max(min(width, 1), 0)
         height = max(min(height, 1), 0)
-        
-        _metadataOutput.rectOfInterest = CGRect(x: x, y: y, width: width, height: height)
+        let targetRect = CGRect(x: x, y: y, width: width, height: height)
+        guard !_metadataOutput.rectOfInterest.equalTo(targetRect) else {
+            return
+        }
+        _metadataOutput.rectOfInterest = targetRect
         if #available(iOS 13, *) {
             SKLogPlain("在iOS 13上，重置扫描区域后不需要重启扫描")
         } else {
