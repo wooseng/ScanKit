@@ -16,6 +16,7 @@ internal class SKScanWrapper: NSObject {
     
     internal var scanCallback: (([SKResult]) -> Void)? // 扫描结果的回调
     internal var wrapperStateDidChange: ((SKScanWrapperState) -> Void)? // 扫描器状态改变的回调
+    internal var captureVideoOrientation = AVCaptureVideoOrientation.portrait // 预览方向
     internal private(set) var wrapperState = SKScanWrapperState.normal { // 扫描器的状态
         didSet {
             wrapperStateDidChange?(wrapperState)
@@ -88,10 +89,11 @@ internal extension SKScanWrapper {
             _scanAreaRect = rectOfScan
             needResetRectScanArea = true
         }
-        if let orientation = UIDevice.current.captureVideoOrientation,
-            orientation != _previewLayer?.connection?.videoOrientation {
+        if captureVideoOrientation != _previewLayer?.connection?.videoOrientation {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+                self._previewLayer?.connection?.videoOrientation = self.captureVideoOrientation
+            }
             SKLogPlain("预览图层方向改变")
-            _previewLayer?.connection?.videoOrientation = orientation
         }
         SKLogPlain("重置预览视图Rect")
         if needResetRectScanArea {

@@ -34,6 +34,11 @@ public class SKView: UIView {
     private lazy var _wrapper = SKScanWrapper()
     private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
     private lazy var _maskView = SKMaskView()
+    private var _captureVideoOrientation = AVCaptureVideoOrientation.portrait { // 当前方向
+        didSet {
+            _wrapper.captureVideoOrientation = _captureVideoOrientation
+        }
+    }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -157,6 +162,16 @@ private extension SKView {
     }
     
     @objc func orientationDidChange(noti: Notification) {
+        switch UIApplication.shared.statusBarOrientation {
+        case .portrait:
+            _captureVideoOrientation = .portrait
+        case .landscapeLeft:
+            _captureVideoOrientation = .landscapeLeft
+        case .landscapeRight:
+            _captureVideoOrientation = .landscapeRight
+        default:
+            return
+        }
         setNeedsLayout()
         _maskView.setNeedsDisplay()
     }
