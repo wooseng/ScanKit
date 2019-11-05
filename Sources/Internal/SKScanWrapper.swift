@@ -28,11 +28,22 @@ internal class SKScanWrapper: NSObject {
     private var _scanAreaRect = CGRect.zero // 扫码区域的原始Rect
     private lazy var _session: AVCaptureSession = { // 会话对象
         let temp = AVCaptureSession()
-        temp.sessionPreset = .hd1920x1080 // 设置会话采集率
+        
+        // 设置会话采集率
+        temp.sessionPreset = .high
         return temp
     }()
     
-    private lazy var _inputDevice = AVCaptureDevice.default(for: .video)
+    private lazy var _inputDevice: AVCaptureDevice? = {
+        let temp = AVCaptureDevice.default(for: .video)
+        do {
+            try temp?.lockForConfiguration()
+            temp?.focusMode = .continuousAutoFocus
+            temp?.unlockForConfiguration()
+        } catch { }
+        return temp
+    }()
+    
     private lazy var _input: AVCaptureDeviceInput? = {
         guard let device = _inputDevice,
             let input = try? AVCaptureDeviceInput(device: device) else {

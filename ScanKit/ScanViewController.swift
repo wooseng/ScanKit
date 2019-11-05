@@ -25,6 +25,7 @@ class ScanViewController: SKViewController {
         } else {
             scanView?.scanArea.turnIntoAlipay()
         }
+        scanView?.scanArea.offsetY = -60
     }
     
     override func didScanStartRunning() {

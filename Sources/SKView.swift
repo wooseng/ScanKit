@@ -89,7 +89,6 @@ public extension SKView {
     
     /// 开始运行扫描器
     func startRunning() {
-        _wrapper.scanCallback = scanCallback
         _wrapper.startRunning()
     }
     
@@ -139,6 +138,9 @@ private extension SKView {
     // 设置扫描器
     func setupWrapper() {
         _wrapper.setContainer(self)
+        _wrapper.scanCallback = { [weak self] results in
+            self?.scanCallback?(results)
+        }
         _wrapper.wrapperStateDidChange = { [weak self] in
             SKLogPlain("扫描器状态", $0)
             switch $0 {
