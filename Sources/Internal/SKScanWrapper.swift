@@ -109,7 +109,7 @@ internal extension SKScanWrapper {
         }
         SKLogPlain("重置预览视图Rect")
         if needResetRectScanArea {
-            resetScanArea(rectOfScan, in: rect)
+            resetScanArea(rectOfScan)
         }
     }
     
@@ -277,26 +277,23 @@ private extension SKScanWrapper {
     }
     
     // 重置扫描区域的Rect
-    func resetScanArea(_ rect: CGRect, in superRect: CGRect) {
-        var x = rect.minX / superRect.width
-        var y = rect.minY / superRect.height
-        var width = rect.width / superRect.width
-        var height = rect.height / superRect.height
-        x = max(min(x, 1), 0)
-        y = max(min(y, 1), 0)
-        width = max(min(width, 1), 0)
-        height = max(min(height, 1), 0)
-        let targetRect = CGRect(x: x, y: y, width: width, height: height)
-        guard !_metadataOutput.rectOfInterest.equalTo(targetRect) else {
-            return
+    func resetScanArea(_ rect: CGRect) {
+        DispatchQueue.global().async {
+            guard let targetRect = self._previewLayer?.metadataOutputRectConverted(fromLayerRect: rect),
+                !self._metadataOutput.rectOfInterest.equalTo(targetRect) else {
+                return
+            }
+            
+            self._metadataOutput.rectOfInterest = targetRect
+            if #available(iOS 13, *) {
+                SKLogPlain("在iOS 13上，重置扫描区域后不需要重启扫描")
+            } else {
+                DispatchQueue.main.async {
+                    self.restartRunning(nil)
+                }
+            }
+            SKLogPlain("重置扫描区域的Rect", self._metadataOutput.rectOfInterest)
         }
-        _metadataOutput.rectOfInterest = targetRect
-        if #available(iOS 13, *) {
-            SKLogPlain("在iOS 13上，重置扫描区域后不需要重启扫描")
-        } else {
-            restartRunning(nil)
-        }
-        SKLogPlain("重置扫描区域的Rect", _metadataOutput.rectOfInterest)
     }
 }
 

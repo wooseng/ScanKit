@@ -17,12 +17,16 @@ public class SKView: UIView {
     public var scanCallback: (([SKResult]) -> Void)? // 扫描器扫描到结果后会使用此闭包进行回调
     public var scanDidStartRunning: (() -> Void)? // 扫描器启动扫描后会使用此闭包进行回调
     public var scanDidStopRunning: (() -> Void)? // 扫描器停止扫描后会使用此闭包进行回调
-    public var isLimitRecognitionArea = false { // 是否限制识别区域
+    
+    /// 是否限制识别区域
+    public var isLimitRecognitionArea = false {
         didSet {
             setNeedsLayout()
         }
     }
+    
     public private(set) lazy var animateView = SKAnimationView()
+    
     public var scanArea = SKScanArea() {
         didSet {
             animateView.scanArea = scanArea

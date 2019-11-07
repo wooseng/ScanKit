@@ -30,6 +30,7 @@ class ScanViewController: SKViewController {
     
     override func didScanStartRunning() {
         super.didScanStartRunning()
+        scanView?.isLimitRecognitionArea = true
     }
     
 }
