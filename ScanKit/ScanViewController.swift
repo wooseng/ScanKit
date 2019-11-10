@@ -14,7 +14,7 @@ class ScanViewController: SKViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "哈哈"
+        title = "扫一扫"
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -26,11 +26,6 @@ class ScanViewController: SKViewController {
             scanView?.scanArea.turnIntoAlipay()
         }
         scanView?.scanArea.offsetY = -60
-    }
-    
-    override func didScanStartRunning() {
-        super.didScanStartRunning()
-        scanView?.isLimitRecognitionArea = true
     }
     
 }

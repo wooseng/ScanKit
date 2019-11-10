@@ -35,6 +35,8 @@
 		94BA07E5236ADFE3009FBD31 /* SKResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BA07D9236ADFE3009FBD31 /* SKResult.swift */; };
 		94BA07E6236ADFE3009FBD31 /* SKConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BA07DA236ADFE3009FBD31 /* SKConstants.swift */; };
 		94BA07E7236ADFE3009FBD31 /* SKPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BA07DB236ADFE3009FBD31 /* SKPermission.swift */; };
+		94EBDDD92377AE1F00570128 /* SKDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EBDDD82377AE1F00570128 /* SKDetector.swift */; };
+		94EBDDDB2377D1CF00570128 /* SKError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EBDDDA2377D1CF00570128 /* SKError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +128,8 @@
 		94BA07DB236ADFE3009FBD31 /* SKPermission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKPermission.swift; sourceTree = "<group>"; };
 		94BA07E8236AE011009FBD31 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		94BA07E9236AE011009FBD31 /* Sources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sources.h; sourceTree = "<group>"; };
+		94EBDDD82377AE1F00570128 /* SKDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKDetector.swift; sourceTree = "<group>"; };
+		94EBDDDA2377D1CF00570128 /* SKError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +182,7 @@
 				9495CB7E236E87700052B926 /* UIDevice+Orientation.swift */,
 				9495CB80236E9D560052B926 /* SKMaskView.swift */,
 				94138D91236EC0610024CDFB /* SKHelper.swift */,
+				94EBDDD82377AE1F00570128 /* SKDetector.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -254,6 +259,7 @@
 				94BA07D5236ADFE3009FBD31 /* SKView.swift */,
 				94BA07D7236ADFE3009FBD31 /* SKViewController.swift */,
 				94BA07E9236AE011009FBD31 /* Sources.h */,
+				94EBDDDA2377D1CF00570128 /* SKError.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -509,6 +515,8 @@
 				94BA07E2236ADFE3009FBD31 /* SKScanWrapper.swift in Sources */,
 				94BA07E7236ADFE3009FBD31 /* SKPermission.swift in Sources */,
 				94BA07E5236ADFE3009FBD31 /* SKResult.swift in Sources */,
+				94EBDDD92377AE1F00570128 /* SKDetector.swift in Sources */,
+				94EBDDDB2377D1CF00570128 /* SKError.swift in Sources */,
 				9495CB81236E9D560052B926 /* SKMaskView.swift in Sources */,
 				94BA07DC236ADFE3009FBD31 /* SKLog.swift in Sources */,
 				94BA07E6236ADFE3009FBD31 /* SKConstants.swift in Sources */,
@@ -832,7 +840,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.14;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -864,7 +872,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.14;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.51shaoxi.Sources;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

@@ -18,10 +18,26 @@ public class SKView: UIView {
     public var scanDidStartRunning: (() -> Void)? // 扫描器启动扫描后会使用此闭包进行回调
     public var scanDidStopRunning: (() -> Void)? // 扫描器停止扫描后会使用此闭包进行回调
     
-    /// 是否限制识别区域
+    /// 是否限制识别区域，默认并建议关闭
     public var isLimitRecognitionArea = false {
         didSet {
             setNeedsLayout()
+        }
+    }
+    
+    /// 是否开启探测器进行识别，可以提升识别速度与识别度，默认开启
+    /// 开启后会使用CIFilter对图像进行实时处理，然后使用CIDetector进行识别
+    /// 如果机器性能较低，建议关闭
+    public var isDetectorEnable = true {
+        didSet {
+            _wrapper.isDetectorEnable = isDetectorEnable
+        }
+    }
+    
+    /// 是否开启探测器预览视图，只有开启探测器进行识别，此属性才有效，默认关闭，一般用于测试
+    public var isDetectPreviewEnable = false {
+        didSet {
+            _wrapper.isDetectPreviewEnable = isDetectPreviewEnable
         }
     }
     

@@ -17,12 +17,20 @@ internal class SKScanWrapper: NSObject {
     internal var scanCallback: (([SKResult]) -> Void)? // 扫描结果的回调
     internal var wrapperStateDidChange: ((SKScanWrapperState) -> Void)? // 扫描器状态改变的回调
     internal var captureVideoOrientation = AVCaptureVideoOrientation.portrait // 预览方向
+    internal var isDetectorEnable = true // 是否开启探测器进行识别
+    internal var isDetectPreviewEnable = false { // 是否开启探测器预览视图
+        didSet {
+            _detectPreview.isHidden = !isDetectPreviewEnable
+            _detector.delete = isDetectPreviewEnable ? self : nil
+        }
+    }
     internal private(set) var wrapperState = SKScanWrapperState.normal { // 扫描器的状态
         didSet {
             wrapperStateDidChange?(wrapperState)
         }
     }
     
+    private var _lastCallbackTime = Date.distantPast // 上次回调结果的时间，用来控制回调的频率
     private var _previewLayer: AVCaptureVideoPreviewLayer? // 预览视图
     private weak var _container: UIView? // 预览视图的容器
     private var _scanAreaRect = CGRect.zero // 扫码区域的原始Rect
@@ -68,6 +76,22 @@ internal class SKScanWrapper: NSObject {
         return temp
     }()
     
+    // 图片探测器
+    private lazy var _detector = SKDetector()
+    
+    // 图片探测器正在工作
+    private var _isDetecting = false
+    
+    // 探测器预览视图
+    private lazy var _detectPreview: UIImageView = {
+        let temp = UIImageView()
+        temp.frame = CGRect(x: 20, y: 80, width: 150, height: 150)
+        temp.contentMode = .scaleAspectFill
+        temp.clipsToBounds = true
+        temp.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
+        return temp
+    }()
+    
     deinit {
         SKLogWarn("deinit:", self.classForCoder)
     }
@@ -79,6 +103,7 @@ internal extension SKScanWrapper {
     /// 设置预览图层的容器
     func setContainer(_ view: UIView) {
         _container = view
+        _container?.addSubview(_detectPreview)
         guard let layer = _previewLayer else {
             return
         }
@@ -88,6 +113,7 @@ internal extension SKScanWrapper {
     
     /// 重置预览视图的 Rect 和 扫描区域的 Rect
     func resize(_ rect: CGRect, rectOfScan: CGRect) {
+        _detectPreview.frame = rectOfScan
         guard let layer = _previewLayer else {
             return
         }
@@ -266,10 +292,10 @@ private extension SKScanWrapper {
     // 设置预览图层
     func setupPreviewLayer() {
         _previewLayer = AVCaptureVideoPreviewLayer(session: _session)
-        
+
         // 保持纵横比；填充层边界
         _previewLayer?.videoGravity = .resizeAspectFill
-        
+
         if let view = _container {
             _previewLayer?.frame = view.bounds
             view.layer.insertSublayer(_previewLayer!, at: 0)
@@ -279,22 +305,34 @@ private extension SKScanWrapper {
     // 重置扫描区域的Rect
     func resetScanArea(_ rect: CGRect) {
         DispatchQueue.global().async {
-            guard let targetRect = self._previewLayer?.metadataOutputRectConverted(fromLayerRect: rect),
+            guard var targetRect = self._previewLayer?.metadataOutputRectConverted(fromLayerRect: rect),
                 !self._metadataOutput.rectOfInterest.equalTo(targetRect) else {
                 return
             }
-            
+            targetRect.origin.x = max(0, targetRect.origin.x)
+            targetRect.origin.y = max(0, targetRect.origin.y)
+            targetRect.size.width = min(1, targetRect.size.width)
+            targetRect.size.height = min(1, targetRect.size.height)
+
+            self._session.beginConfiguration()
             self._metadataOutput.rectOfInterest = targetRect
-            if #available(iOS 13, *) {
-                SKLogPlain("在iOS 13上，重置扫描区域后不需要重启扫描")
-            } else {
-                DispatchQueue.main.async {
-                    self.restartRunning(nil)
-                }
-            }
+            self._session.commitConfiguration()
             SKLogPlain("重置扫描区域的Rect", self._metadataOutput.rectOfInterest)
         }
     }
+    
+    // 扫描到数据后，必须通过此方法进行回调，此方法里对回调频率做了控制，避免极短时间内回调很多次
+    func didScanResults(_ results: [SKResult]) {
+        let date = Date()
+        guard date.timeIntervalSince(_lastCallbackTime) >= 1 else {
+            return
+        }
+        _lastCallbackTime = date
+        objc_sync_enter(self)
+        scanCallback?(results)
+        objc_sync_exit(self)
+    }
+    
 }
 
 
@@ -302,12 +340,13 @@ extension SKScanWrapper: AVCaptureMetadataOutputObjectsDelegate {
     
     // 扫描获取到的数据输出回调
     internal func metadataOutput(_ output: AVCaptureMetadataOutput,
-                               didOutput metadataObjects: [AVMetadataObject],
-                               from connection: AVCaptureConnection) {
-        let result = metadataObjects.map {
-            SKResult($0)
+                                 didOutput metadataObjects: [AVMetadataObject],
+                                 from connection: AVCaptureConnection) {
+        let size = _previewLayer?.bounds.size ?? CGSize.zero
+        let results = metadataObjects.map { SKResult($0, size: size) }
+        if !results.isEmpty {
+            didScanResults(results)
         }
-        scanCallback?(result)
     }
     
 }
@@ -315,15 +354,34 @@ extension SKScanWrapper: AVCaptureMetadataOutputObjectsDelegate {
 extension SKScanWrapper: AVCaptureVideoDataOutputSampleBufferDelegate {
     
     internal func captureOutput(_ output: AVCaptureOutput,
-                              didDrop sampleBuffer: CMSampleBuffer,
-                              from connection: AVCaptureConnection) {
-        
+                                didOutput sampleBuffer: CMSampleBuffer,
+                                from connection: AVCaptureConnection) {
+        guard isDetectorEnable, !_isDetecting else {
+            return
+        }
+        _isDetecting = true
+        DispatchQueue.global().async {
+            do {
+                let results = try self._detector.detect(from: sampleBuffer)
+                if !results.isEmpty {
+                    DispatchQueue.main.async {
+                        self.didScanResults(results)
+                    }
+                }
+            } catch let error {
+                let e = error as? SKError
+                SKLogError(e?.message)
+            }
+            self._isDetecting = false
+        }
     }
     
-    internal func captureOutput(_ output: AVCaptureOutput,
-                              didOutput sampleBuffer: CMSampleBuffer,
-                              from connection: AVCaptureConnection) {
-        
+}
+
+extension SKScanWrapper: SKDetectorDelete {
+    
+    func detector(_ detector: SKDetector, didOutput output: UIImage) {
+        _detectPreview.image = output
     }
     
 }
