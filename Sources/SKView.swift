@@ -92,7 +92,7 @@ public class SKView: UIView {
         let area = scanAreaRect
         _wrapper.resize(bounds, rectOfScan: isLimitRecognitionArea ? area : bounds)
         animateView.frame = area
-        _loadingIndicatorView.center = center
+        _loadingIndicatorView.center = animateView.center
         
         _maskView.scanAreaRect = area
         _maskView.frame = bounds
