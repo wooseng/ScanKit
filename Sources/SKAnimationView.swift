@@ -67,6 +67,7 @@ public extension SKAnimationView {
         guard !isAnimating else {
             return
         }
+        _willStopAnimating = false
         animation()
     }
     
