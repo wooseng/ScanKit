@@ -17,6 +17,9 @@ open class SKViewController: UIViewController {
     /// 扫描视图控件
     public private(set) var scanView: SKView?
     
+    /// 扫描区域样式配置
+    public var scanArea: SKScanArea?
+    
     /// 扫描成功的回调，如果是继承此类，则重载相关方法即可
     public var scanCallback: (([SKResult]) -> Void)?
     
@@ -72,10 +75,7 @@ open class SKViewController: UIViewController {
     
     /// 扫描视图设置完毕会调用，如果需要添加自己的视图控件，可以重载此方法，然后在这里面写
     /// 注意，扫描视图设置失败不会调用，例如没有权限、设备不支持等，都会导致此方法不调用
-    open func didScanViewSetupFinsh() {
-        scanView?.animateView.startAnimating()
-        scanView?.scanArea.turnIntoAlipay()
-    }
+    open func didScanViewSetupFinsh() { }
     
     /// 扫描启动完成后会调用此方法
     open func didScanStartRunning() { }
@@ -126,6 +126,11 @@ private extension SKViewController {
             scanView?.removeFromSuperview()
         }
         let scanView = SKView()
+        if let scanArea = scanArea {
+            scanView.scanArea = scanArea
+        } else {
+            scanView.scanArea.turnIntoAlipay()
+        }
         scanView.frame = view.bounds
         scanView.scanCallback = { [weak self] results in
             self?._didScanFinshed(results)
@@ -137,8 +142,9 @@ private extension SKViewController {
             self?.didScanStopRunning()
         }
         view.addSubview(scanView)
-        self.scanView = scanView
         scanView.startRunning()
+        scanView.animateView.startAnimating()
+        self.scanView = scanView
         didScanViewSetupFinsh()
         #endif
     }
