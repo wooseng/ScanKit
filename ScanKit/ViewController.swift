@@ -57,19 +57,21 @@ class ViewController: UIViewController {
             }
             navigationController?.pushViewController(vc, animated: true)
         case _alipayButton:
-            let vc = SKViewController()
+            let vc = ScanViewController()
             var area = SKScanArea()
             area.turnIntoAlipay()
             vc.scanArea = area
+            vc.setOutsideTheScanArea(UIColor.yellow.withAlphaComponent(0.3))
             vc.scanCallback = { [weak self] result in
                 self?.showReslut(result)
             }
             navigationController?.pushViewController(vc, animated: true)
         case _wechatButton:
-            let vc = SKViewController()
+            let vc = ScanViewController()
             var area = SKScanArea()
             area.turnIntoWechat()
             vc.scanArea = area
+            vc.setOutsideTheScanArea(UIColor.red.withAlphaComponent(0.3))
             vc.scanCallback = { [weak self] result in
                 self?.showReslut(result)
             }

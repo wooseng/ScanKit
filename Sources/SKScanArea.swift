@@ -32,13 +32,6 @@ public struct SKScanArea {
     /// 基于视图中心沿Y轴方向偏移，如果大于0，则向下偏移，小于0，则向上偏移，默认居中
     public var offsetY: CGFloat = 0
     
-    //MARK: 非扫码区域的蒙层
-    public var maskColor: UIColor? = UIColor.black
-    public var maskAlpha: CGFloat = 0.6
-    
-    /// 是否开启非扫码区域使用高斯模糊(如果设置为true，则 maskColor 与 maskAlpha 两个属性将会失效)
-    public var isMaskBlurEnable = false
-    
     //MARK: 动画设置
     public var animationImage: UIImage?
     public var animationDuration: TimeInterval = 2
@@ -62,4 +55,16 @@ public extension SKScanArea {
         borderColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
         cornerWidth = 5
     }
+}
+
+internal extension SKScanArea {
+    
+    func rect(in bounds: CGRect) -> CGRect {
+        let width = min(self.width, bounds.width)
+        let height = min(self.height, bounds.height)
+        let x = (bounds.width - width) / 2
+        let y = (bounds.height - height) / 2 + offsetY
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
+    
 }

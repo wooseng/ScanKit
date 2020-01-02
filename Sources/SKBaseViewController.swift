@@ -5,9 +5,11 @@
 //  Created by 稍息 on 2020/1/2.
 //  Copyright © 2020 残无殇. All rights reserved.
 //
+//  基础扫码视图控制器，只包含扫码需要的基础与核心功能
+//  使用的时候，如果选择继承此类，那么很多常用功能都需要自己动手去实现
+//
 
 import UIKit
-import AVFoundation
 
 open class SKBaseViewController: UIViewController {
     
@@ -34,7 +36,6 @@ open class SKBaseViewController: UIViewController {
     public var scanArea = SKScanArea() {
         didSet {
             animateView.scanArea = scanArea
-            _maskView.scanArea = scanArea
             view.setNeedsLayout()
         }
     }
@@ -44,9 +45,6 @@ open class SKBaseViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
-        
-        _maskView.scanArea = scanArea
-        view.addSubview(_maskView)
         
         animateView.backgroundColor = UIColor.clear
         animateView.scanArea = scanArea
@@ -83,11 +81,8 @@ open class SKBaseViewController: UIViewController {
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let area = scanAreaRect
+        let area = scanArea.rect(in: view.bounds)
         animateView.frame = area
-        
-        _maskView.scanAreaRect = area
-        _maskView.frame = view.bounds
         
         _loadingIndicatorView.center = animateView.center
     }
@@ -100,10 +95,10 @@ open class SKBaseViewController: UIViewController {
         let message = type == .camera ? "您没有使用摄像头的权限，是否前往设置？" : "您没有访问相册的权限，是否前往设置？"
         let alert = UIAlertController(title: "权限提示", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { [weak self] _ in
-            self?.closeCurrentPage()
+            self?.back(animated: true)
         }))
         alert.addAction(UIAlertAction(title: "打开设置", style: .default, handler: { [weak self] _ in
-            self?.closeCurrentPage()
+            self?.back(animated: true)
             SKPermission.openSystemSeting()
         }))
         present(alert, animated: true, completion: nil)
@@ -119,7 +114,7 @@ open class SKBaseViewController: UIViewController {
     /// 如果继承此视图控制器，可以重载此方法，然后实现自己的逻辑
     /// 如果直接使用此视图控制器，则可以选择实现回调闭包函数 scanCallback
     open func didScanFinshed(_ results: [SKResult]) {
-        closeCurrentPage()
+        back(animated: true)
     }
     
     deinit {
@@ -128,7 +123,6 @@ open class SKBaseViewController: UIViewController {
     
     //MARK: - 私有属性
     private lazy var _wrapper = SKScanWrapper()
-    private lazy var _maskView = SKMaskView()
     private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
     
     //MARK: - 视图旋转限制
@@ -165,25 +159,6 @@ public extension SKBaseViewController {
 }
 
 private extension SKBaseViewController {
-    
-    // 关闭当前页面
-    func closeCurrentPage() {
-        guard let nav = navigationController, nav.viewControllers.first != self else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        nav.popViewController(animated: true)
-    }
-    
-    // 扫描区域
-    var scanAreaRect: CGRect {
-        let areaCenter = CGPoint(x: view.center.x, y: view.center.y + scanArea.offsetY)
-        let width = scanArea.width
-        let height = scanArea.height
-        let minX = areaCenter.x - width / 2
-        let minY = areaCenter.y - height / 2
-        return CGRect(x: minX, y: minY, width: width, height: height)
-    }
     
     // 设置扫描器
     func setupScanWrapper() {
