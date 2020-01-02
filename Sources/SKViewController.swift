@@ -67,16 +67,17 @@ open class SKViewController: SKBaseViewController {
         super.didWrapperStateChange(state)
         switch state {
         case .loading, .starting, .stoping:
-            if !(_loadingIndicatorView.isAnimating) {
-                _loadingIndicatorView.startAnimating()
-                _loadingIndicatorView.isHidden = false
+            guard !_loadingIndicatorView.isAnimating else {
+                return
             }
-            break
+            _loadingIndicatorView.startAnimating()
+            _loadingIndicatorView.isHidden = false
         default:
-            if _loadingIndicatorView.isAnimating {
-                _loadingIndicatorView.stopAnimating()
-                _loadingIndicatorView.isHidden = true
+            guard _loadingIndicatorView.isAnimating else {
+                return
             }
+            _loadingIndicatorView.stopAnimating()
+            _loadingIndicatorView.isHidden = true
         }
     }
     

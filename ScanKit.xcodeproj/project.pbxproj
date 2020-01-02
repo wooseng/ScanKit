@@ -286,18 +286,18 @@
 		94BA07B4236ADFAB009FBD31 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				94138D93236ED7630024CDFB /* SKAssets.xcassets */,
 				94BA07E8236AE011009FBD31 /* Info.plist */,
 				943F3FF7236AE3D5007D5973 /* Internal */,
-				94BA07DA236ADFE3009FBD31 /* SKConstants.swift */,
 				94BA07D4236ADFE2009FBD31 /* SKAnimationView.swift */,
+				94138D93236ED7630024CDFB /* SKAssets.xcassets */,
+				94CA569B23BD8DE800D8FB7F /* SKBaseViewController.swift */,
+				94BA07DA236ADFE3009FBD31 /* SKConstants.swift */,
 				94BA07D3236ADFE2009FBD31 /* SKEnum.swift */,
+				94EBDDDA2377D1CF00570128 /* SKError.swift */,
 				94BA07D9236ADFE3009FBD31 /* SKResult.swift */,
 				94BA07D8236ADFE3009FBD31 /* SKScanArea.swift */,
-				94CA569B23BD8DE800D8FB7F /* SKBaseViewController.swift */,
 				94BA07D7236ADFE3009FBD31 /* SKViewController.swift */,
 				94BA07E9236AE011009FBD31 /* Sources.h */,
-				94EBDDDA2377D1CF00570128 /* SKError.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
