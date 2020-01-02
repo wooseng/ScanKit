@@ -33,23 +33,12 @@ open class SKBaseViewController: UIViewController {
     }
     
     /// 扫描区域配置
-    public var scanArea = SKScanArea() {
-        didSet {
-            animateView.scanArea = scanArea
-            view.setNeedsLayout()
-        }
-    }
-    
-    public private(set) lazy var animateView = SKAnimationView()
+    public var scanArea = SKScanArea()
     
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
         
-        animateView.backgroundColor = UIColor.clear
-        animateView.scanArea = scanArea
-        view.addSubview(animateView)
-        animateView.startAnimating()
         scanArea.turnIntoAlipay()
         
         SKPermission.authorizeCamera {
@@ -65,26 +54,16 @@ open class SKBaseViewController: UIViewController {
         super.viewDidDisappear(animated)
         _wrapper.stopRunning()
         _wrapper.closeTorch()
-        animateView.stopAnimating()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         _wrapper.startRunning()
-        animateView.startAnimating()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIDevice.current.forceOrientation(to: .portrait)
-    }
-    
-    open override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        let area = scanArea.rect(in: view.bounds)
-        animateView.frame = area
-        
-        _loadingIndicatorView.center = animateView.center
     }
     
     /// 权限拒绝后会调用此方法
@@ -117,13 +96,15 @@ open class SKBaseViewController: UIViewController {
         back(animated: true)
     }
     
+    /// 扫描器状态发生变化会调用此方法
+    open func didWrapperStateChange(_ state: SKScanWrapperState) { }
+    
     deinit {
         SKLogWarn("deinit:", self.classForCoder)
     }
     
     //MARK: - 私有属性
     private lazy var _wrapper = SKScanWrapper()
-    private lazy var _loadingIndicatorView = UIActivityIndicatorView(style: .white) // 加载中的旋转视图
     
     //MARK: - 视图旋转限制
     open override var shouldAutorotate: Bool { true }
@@ -165,7 +146,6 @@ private extension SKBaseViewController {
         #if targetEnvironment(simulator)
         SKLogError("此框架暂不支持模拟器")
         #else
-        view.addSubview(_loadingIndicatorView)
         _wrapper.setContainer(view)
         _wrapper.scanCallback = { [weak self] in
             self?._wrapper.stopRunning()
@@ -174,19 +154,7 @@ private extension SKBaseViewController {
         }
         _wrapper.wrapperStateDidChange = { [weak self] in
             SKLogPlain("扫描器状态", $0)
-            switch $0 {
-            case .loading, .starting, .stoping:
-                if !(self?._loadingIndicatorView.isAnimating ?? false) {
-                    self?._loadingIndicatorView.startAnimating()
-                    self?._loadingIndicatorView.isHidden = false
-                }
-                break
-            default:
-                if self?._loadingIndicatorView.isAnimating ?? false {
-                    self?._loadingIndicatorView.stopAnimating()
-                    self?._loadingIndicatorView.isHidden = true
-                }
-            }
+            self?.didWrapperStateChange($0)
             if $0 == .started {
                 self?.didScanStartRunning()
             } else if $0 == .stoped {

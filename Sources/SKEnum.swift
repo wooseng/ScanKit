@@ -18,7 +18,7 @@ public enum SKPermissionType {
 }
 
 /// 扫描器的状态
-internal enum SKScanWrapperState {
+public enum SKScanWrapperState {
     
     /// 正常状态，扫描器加载前是这种状态
     case normal
