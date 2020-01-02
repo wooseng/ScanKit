@@ -1,0 +1,24 @@
+PODS:
+  - Hue (5.0.0)
+  - LookinServer (1.0.0)
+  - SnapKit (5.0.1)
+
+DEPENDENCIES:
+  - Hue
+  - LookinServer
+  - SnapKit
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Hue
+    - LookinServer
+    - SnapKit
+
+SPEC CHECKSUMS:
+  Hue: c129cb67be7d093a82bbbc30ce8a96757bf6f37a
+  LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+
+PODFILE CHECKSUM: 263c15d9795dbfbf08558b2bf33da2ed863634de
+
+COCOAPODS: 1.8.4
