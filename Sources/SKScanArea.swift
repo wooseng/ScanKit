@@ -13,12 +13,12 @@ import UIKit
 public struct SKScanArea {
     
     public init() {
-        width = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 150
+        width = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 100
         height = width
     }
     
-    public var width: CGFloat = 230
-    public var height: CGFloat = 230
+    public var width: CGFloat = 0
+    public var height: CGFloat = 0
     
     //MARK: 边框
     public var borderWidth: CGFloat = 1
@@ -41,15 +41,15 @@ public struct SKScanArea {
 //MARK: 样式切换
 public extension SKScanArea {
     
-    /// 将扫描区域样式修改为微信样式
-    mutating func turnIntoWechat() {
+    /// 将扫描区域样式修改为光标风格样式，类似微信
+    mutating func turnIntoCursorStyle() {
         animationImage = SKHelper.image(with: "sk_image_animate_wechat")
         cornerColor = UIColor.green.withAlphaComponent(0.6)
         borderColor = UIColor.gray.withAlphaComponent(0.6)
     }
     
-    /// 将扫描区样式修改为支付宝样式
-    mutating func turnIntoAlipay() {
+    /// 将扫描区区域样式修改为网格风格样式，类似支付宝
+    mutating func turnIntoGridStyle() {
         animationImage = SKHelper.image(with: "sk_image_animate_alipay")
         cornerColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
         borderColor = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)

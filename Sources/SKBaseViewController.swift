@@ -39,8 +39,6 @@ open class SKBaseViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
         
-        scanArea.turnIntoAlipay()
-        
         SKPermission.authorizeCamera {
             if $0 {
                 self.setupScanWrapper()

@@ -10,8 +10,9 @@
 
 import UIKit
 
-public class SKAnimationView: UIView {
-
+public class SKAnimationView: SKAnimation {
+    
+    public private(set) var isAnimating = false // 是否正在动画
     public var scanArea = SKScanArea() {
         didSet {
             setNeedsDisplay()
@@ -19,7 +20,6 @@ public class SKAnimationView: UIView {
     }
     
     private lazy var _animationgView = UIImageView()
-    private(set) var isAnimating = false // 是否正在动画
     private var _willStopAnimating = false // 是否将要停止动画
     
     public override init(frame: CGRect) {
@@ -84,32 +84,57 @@ public extension SKAnimationView {
 private extension SKAnimationView {
     
     func animation() {
+        guard let image = scanArea.animationImage else {
+            SKLogWarn("动画图片为空")
+            return
+        }
+        let width = frame.width
+        let height = width * image.size.height / image.size.width
+        guard width > 0, height > 0 else {
+            SKLogWarn("视图尚未设置完成")
+            return
+        }
         isAnimating = true
         _animationgView.image = scanArea.animationImage
-        let width = frame.width
-        var height = frame.height
-        if let image = scanArea.animationImage {
-            height = width * image.size.height / image.size.width
-        } else {
-            SKLogWarn("动画图片为空")
-        }
+        
         _animationgView.frame = CGRect(x: 0, y: -height, width: width, height: height)
         let targetRect = CGRect(x: 0, y: frame.height - height, width: width, height: height)
         _animationgView.isHidden = false
         _animationgView.alpha = 1
-        UIView.animate(withDuration: scanArea.animationDuration, animations: {
+        let duration = scanArea.animationDuration // 动画持续时长
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        UIView.animate(withDuration: duration, animations: {
             self._animationgView.frame = targetRect
         }) { _ in
-            UIView.animate(withDuration: 0.5, animations: {
+            group.leave()
+        }
+        
+        group.enter()
+        let disappearDuration = duration / 3
+        let disappearBegin = duration - disappearDuration
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + disappearBegin) {
+            UIView.animate(withDuration: disappearDuration, animations: {
                 self._animationgView.alpha = 0
             }) { _ in
-                self._animationgView.isHidden = true
-                if self._willStopAnimating {
-                    self.isAnimating = false
-                } else {
-                    self.animation()
-                }
+                group.leave()
             }
+        }
+        
+        group.notify(queue: DispatchQueue.main) { [weak self] in
+            self?.didAnimationEnd()
+        }
+    }
+    
+    // 动画结束执行的方法
+    func didAnimationEnd() {
+        _animationgView.isHidden = true
+        if _willStopAnimating {
+            isAnimating = false
+        } else {
+            animation()
         }
     }
     

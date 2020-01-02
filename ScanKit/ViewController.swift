@@ -59,9 +59,8 @@ class ViewController: UIViewController {
         case _alipayButton:
             let vc = ScanViewController()
             var area = SKScanArea()
-            area.turnIntoAlipay()
+            area.turnIntoGridStyle()
             vc.scanArea = area
-            vc.setOutsideTheScanArea(UIColor.yellow.withAlphaComponent(0.3))
             vc.scanCallback = { [weak self] result in
                 self?.showReslut(result)
             }
@@ -69,9 +68,8 @@ class ViewController: UIViewController {
         case _wechatButton:
             let vc = ScanViewController()
             var area = SKScanArea()
-            area.turnIntoWechat()
+            area.turnIntoCursorStyle()
             vc.scanArea = area
-            vc.setOutsideTheScanArea(UIColor.red.withAlphaComponent(0.3))
             vc.scanCallback = { [weak self] result in
                 self?.showReslut(result)
             }

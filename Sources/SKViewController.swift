@@ -28,7 +28,6 @@ open class SKViewController: SKBaseViewController {
         animateView.backgroundColor = UIColor.clear
         animateView.scanArea = scanArea
         view.addSubview(animateView)
-        animateView.startAnimating()
         
         view.addSubview(_loadingIndicatorView)
     }
@@ -52,7 +51,7 @@ open class SKViewController: SKBaseViewController {
         _loadingIndicatorView.center = animateView.center
     }
     
-    public private(set) lazy var animateView = SKAnimationView()
+    public private(set) lazy var animateView: SKAnimation = SKAnimationView()
     private lazy var _maskView = SKMaskView()
     
     // 加载中的旋转视图
@@ -62,6 +61,16 @@ open class SKViewController: SKBaseViewController {
         temp.isHidden = true
         return temp
     }()
+    
+    open override func didScanStartRunning() {
+        super.didScanStartRunning()
+        animateView.startAnimating()
+    }
+    
+    open override func didScanStopRunning() {
+        super.didScanStopRunning()
+        animateView.stopAnimating()
+    }
     
     open override func didWrapperStateChange(_ state: SKScanWrapperState) {
         super.didWrapperStateChange(state)
