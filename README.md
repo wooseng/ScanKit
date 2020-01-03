@@ -102,10 +102,16 @@ final func switchedTorch()
 
 4. 修改扫码动画区域
 
-直接实例化一个 `SKScanArea`，修改其中的属性，然后赋值给 `scanView?.scanArea` 即可
+直接实例化一个 `SKScanArea`，修改其中的属性，然后赋值给 `scanArea` 即可
 当然，也可以直接修改属性，例如： `scanArea.width = 100`
 
-5. 其他
+5. 修改动画区域外样式
+使用以下方法设置扫描区域以外的颜色，如果需要透明度，请直接给颜色透明度
+```
+final func setOutsideTheScanArea(_ color: UIColor?)
+```
+
+6. 其他
 源码中注释我会尽量写详细，方便自己研究。
 
 
