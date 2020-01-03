@@ -35,6 +35,9 @@ open class SKBaseViewController: UIViewController {
     /// 扫描区域配置
     public var scanArea = SKScanArea()
     
+    /// 扫描成功后是否停止扫描
+    public var stopAfterScanFinshed = true
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black
@@ -50,13 +53,13 @@ open class SKBaseViewController: UIViewController {
     
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        _wrapper.stopRunning()
-        _wrapper.closeTorch()
+        stopRunning()
+        closeTorch()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        _wrapper.startRunning()
+        startRunning()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -111,6 +114,25 @@ open class SKBaseViewController: UIViewController {
     
 }
 
+//MARK: - 扫描器控制相关
+public extension SKBaseViewController {
+    
+    /// 启动扫描
+    final func startRunning() {
+        #if !targetEnvironment(simulator)
+        _wrapper.startRunning()
+        #endif
+    }
+    
+    /// 停止扫描
+    final func stopRunning() {
+        #if !targetEnvironment(simulator)
+        _wrapper.stopRunning()
+        #endif
+    }
+    
+}
+
 //MARK: - 手电筒相关
 public extension SKBaseViewController {
     
@@ -139,6 +161,14 @@ public extension SKBaseViewController {
 
 private extension SKBaseViewController {
     
+    func _didScanFinshed(_ results: [SKResult]) {
+        if stopAfterScanFinshed {
+            stopRunning()
+        }
+        scanCallback?(results)
+        didScanFinshed(results)
+    }
+    
     // 设置扫描器
     func setupScanWrapper() {
         #if targetEnvironment(simulator)
@@ -146,9 +176,7 @@ private extension SKBaseViewController {
         #else
         _wrapper.setContainer(view)
         _wrapper.scanCallback = { [weak self] in
-            self?._wrapper.stopRunning()
-            self?.scanCallback?($0)
-            self?.didScanFinshed($0)
+            self?._didScanFinshed($0)
         }
         _wrapper.wrapperStateDidChange = { [weak self] in
             SKLogPlain("扫描器状态", $0)
@@ -159,7 +187,7 @@ private extension SKBaseViewController {
                 self?.didScanStopRunning()
             }
         }
-        _wrapper.startRunning()
+        startRunning()
         #endif
     }
     
