@@ -46,8 +46,8 @@ open class SKViewController: SKBaseViewController {
         super.viewDidLayoutSubviews()
         let area = scanArea.rect(in: view.bounds)
         animateView.frame = area
-        _maskView.scanArea = area
         _maskView.frame = view.bounds
+        _maskView.scanArea = area
         _loadingIndicatorView.center = animateView.center
     }
     

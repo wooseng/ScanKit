@@ -12,10 +12,14 @@ import UIKit
 
 internal class SKMaskView: UIView {
     
-    var scanArea = CGRect.zero
-    
+    var scanArea = CGRect.zero {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
     private lazy var _maskLayer = CAShapeLayer()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         isUserInteractionEnabled = false
@@ -36,5 +40,4 @@ internal class SKMaskView: UIView {
         _maskLayer.fillRule = .evenOdd
         _maskLayer.path = path.cgPath
     }
-    
 }
