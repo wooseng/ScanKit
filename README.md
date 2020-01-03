@@ -5,21 +5,50 @@ Swift封装的二维码扫描框架
 由于此框架目前处于开发初步阶段，所以，暂时没有发布到 `Cocoapods`，但已经支持使用 `Cocoapods` 导入。
 在 `Podfile` 文件中添加以下内容
 ```
-pod 'ScanKit', :git => 'https://github.com/wooseng/ScanKit.git'
+pod 'ScanKit', :git => 'https://github.com/wooseng/ScanKit.git', :branch => '0.2'
 ```
 然后使用 `pod install` 即可安装此框架
 
-当然，如果你愿意下载源码拖到项目里，也可以，但是不推荐，开发初步阶段会遇到很多问题，所以更新的频率会稍微高些
+开发初期，更新频率会高些，见谅。
 
-一般来说，在此框架 1.0.0 版本以前，推荐每周查看并更新一次，之后可以保持每月一更的频率
+# 设备方向
+此框架只针对竖直方向，如果你的APP也是只支持竖直方向，那么，你可以忽略此处，否则，请仔细阅读，并在项目中进行对应的设置。
 
-# 建议
-如果APP不仅支持竖屏，还支持横屏，那么建议对扫码页面单独设置仅支持横屏，体验会好很多，横竖屏切换会在用户体验方面略有不足
+1. 如果扫码页面是使用 `UINavigationController ` 推出的，那么需要自定义 `UINavigationController`，并在里面实现以下代码
+```
+override var shouldAutorotate: Bool {
+    topViewController?.shouldAutorotate ?? true
+}
+
+override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    topViewController?.supportedInterfaceOrientations ?? [.portrait, .landscapeLeft, .landscapeRight]
+}
+    
+override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    topViewController?.preferredInterfaceOrientationForPresentation ?? .portrait
+}
+```
+
+2. 如果扫码页面存在于 `UITabBarController` 中，那么需要自定义 `UITabBarController`，并在里面实现以下代码
+```
+override var shouldAutorotate: Bool {
+    topViewController?.shouldAutorotate ?? true
+}
+
+override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    topViewController?.supportedInterfaceOrientations ?? [.portrait, .landscapeLeft, .landscapeRight]
+}
+    
+override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    topViewController?.preferredInterfaceOrientationForPresentation ?? .portrait
+}
+```
+
 
 # 使用
 
-主要有三种使用方式，包含了从简单基础使用，到复杂自定义使用。
-#### 最简单的方式，直接使用框架提供的视图控制器 `SKViewController`
+主要有以下两种使用方式
+#### 直接使用框架提供的视图控制器 `SKViewController`
 ```Swift
 import ScanKit
 
@@ -30,43 +59,53 @@ vc.scanCallback = { results in
 navigationController?.pushViewController(vc, animated: true)
 ```
 
-#### 稍微复杂一点的方式，自定义一个视图控制器并继承 `SKViewController`
+#### 自定义一个视图控制器并继承 `SKViewController`
 这种方式可以满足大多数使用场景，也是最推荐的使用方式，接下来，我就主要介绍一下这种方式。
 
 1. 自定义权限提示
-`SKViewController` 会自动申请对应的权限，想自定义没权限时的弹窗，可以重写 `open func permissionDenied(_ type: SKPermissionType)` 方法，记住，千万不要使用 `super` 关键字，不然就会弹出框架内置的提示哦
+框架会自动申请对应的权限，如果没有对应的权限，会弹出默认的提示框。
+如果想自定义没权限时的弹窗，可以重写以下方法（不要使用 `super` 关键词）：
+```
+open func permissionDenied(_ type: SKPermissionType)
+``` 
 
-2. 需要添加子视图
-由于预览视图与扫描器是异步创建的，所以，如果需要增加子视图，需要重载 `open func didScanViewSetupFinsh()` 方法，然后在里面实现相关逻辑，尽量不要在其他地方设置
+2. 监听扫码事件
+如果是继承 `SKViewController`，可以重载
+```
+open func didScanFinshed(_ results: [SKResult])
+``` 
+方法，然后在里面写获取到码内容后的相关逻辑
+当然，也可以设置以下闭包回调的值，效果是一样的 
+```
+public var scanCallback: (([SKResult]) -> Void)?
+```
 
-3. 监听扫码事件
-如果是继承 `SKViewController`，可以重载 `open func didScanFinshed(_ results: [SKResult])` 方法，然后在里面写获取到码内容后的相关逻辑
-当然，也可以设置闭包回调 `public var scanCallback: (([SKResult]) -> Void)?`，效果是一样的
-
-4. 手电筒控制
+3. 手电筒控制
+框架提供了以下属性与方法，方便控制手电筒
+```
+/// 手电筒是否可用
+var isTorchEnable: Bool { get }
+    
+/// 手电筒是否处于关闭状态
+var isTorchClosed: Bool { get }
+    
+/// 打开手电筒
+final func openTorch()
+    
+/// 关闭手电筒
+final func closeTorch()
+    
+/// 切换手电筒状态
+final func switchedTorch()
 
 ```
-// 手电筒是否可用
-scanView?.isTorchEnable
 
-// 手电筒是否已关闭
-scanView?.isTorchClosed
-
-// 打开手电筒
-scanView?.openTorch()
-
-// 关闭手电筒
-scanView?.closeTorch()
-
-// 切换手电筒模式(打开或关闭)
-scanView?.switchedTorch()
-```
-5. 修改扫码动画区域
+4. 修改扫码动画区域
 
 直接实例化一个 `SKScanArea`，修改其中的属性，然后赋值给 `scanView?.scanArea` 即可
-当然，也可以直接修改属性，例如： `scanView?.scanArea.width = 100` 
+当然，也可以直接修改属性，例如： `scanArea.width = 100`
 
-7. 其他
-源码中注释应该算是写的还阔以吧，自己去研究吧
+5. 其他
+源码中注释我会尽量写详细，方便自己研究。
 
 
