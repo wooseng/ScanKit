@@ -15,6 +15,7 @@ public struct SKScanArea {
     public init() {
         width = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 100
         height = width
+        turnIntoGridStyle()
     }
     
     public var width: CGFloat = 0
