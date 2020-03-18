@@ -21,14 +21,14 @@ open class SKBaseViewController: UIViewController {
     /// 如果机器性能较低，建议关闭
     public var isDetectorEnable = true {
         didSet {
-            _wrapper.isDetectorEnable = isDetectorEnable
+            _wrapper?.isDetectorEnable = isDetectorEnable
         }
     }
     
     /// 是否开启探测器预览视图，只有开启探测器进行识别，此属性才有效，默认关闭，一般用于测试
     public var isDetectPreviewEnable = false {
         didSet {
-            _wrapper.isDetectPreviewEnable = isDetectPreviewEnable
+            _wrapper?.isDetectPreviewEnable = isDetectPreviewEnable
         }
     }
     
@@ -81,7 +81,7 @@ open class SKBaseViewController: UIViewController {
             self?.back(animated: true)
             SKPermission.openSystemSeting()
         }))
-        present(alert, animated: true, completion: nil)
+        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
     }
     
     /// 扫描启动完成后会调用此方法
@@ -105,7 +105,7 @@ open class SKBaseViewController: UIViewController {
     }
     
     //MARK: - 私有属性
-    private lazy var _wrapper = SKScanWrapper()
+    private var _wrapper: SKScanWrapper?
     
     //MARK: - 视图旋转限制
     open override var shouldAutorotate: Bool { true }
@@ -119,16 +119,12 @@ public extension SKBaseViewController {
     
     /// 启动扫描
     final func startRunning() {
-        #if !targetEnvironment(simulator)
-        _wrapper.startRunning()
-        #endif
+        _wrapper?.startRunning()
     }
     
     /// 停止扫描
     final func stopRunning() {
-        #if !targetEnvironment(simulator)
-        _wrapper.stopRunning()
-        #endif
+        _wrapper?.stopRunning()
     }
     
 }
@@ -137,24 +133,28 @@ public extension SKBaseViewController {
 public extension SKBaseViewController {
     
     /// 手电筒是否可用
-    var isTorchEnable: Bool { _wrapper.isTorchEnable }
+    var isTorchEnable: Bool {
+        _wrapper?.isTorchEnable ?? false
+    }
     
     /// 手电筒是否处于关闭状态
-    var isTorchClosed: Bool { _wrapper.isTorchClosed }
+    var isTorchClosed: Bool {
+        _wrapper?.isTorchClosed ?? true
+    }
     
     /// 打开手电筒
     final func openTorch() {
-        _wrapper.openTorch()
+        _wrapper?.openTorch()
     }
     
     /// 关闭手电筒
     final func closeTorch() {
-        _wrapper.closeTorch()
+        _wrapper?.closeTorch()
     }
     
     /// 切换手电筒状态
     final func switchedTorch() {
-        _wrapper.switchedTorch()
+        _wrapper?.switchedTorch()
     }
     
 }
@@ -174,11 +174,12 @@ private extension SKBaseViewController {
         #if targetEnvironment(simulator)
         SKLogError("此框架暂不支持模拟器")
         #else
-        _wrapper.setContainer(view)
-        _wrapper.scanCallback = { [weak self] in
+        _wrapper = SKScanWrapper()
+        _wrapper?.setContainer(view)
+        _wrapper?.scanCallback = { [weak self] in
             self?._didScanFinshed($0)
         }
-        _wrapper.wrapperStateDidChange = { [weak self] in
+        _wrapper?.wrapperStateDidChange = { [weak self] in
             SKLogPlain("扫描器状态", $0)
             self?.didWrapperStateChange($0)
             if $0 == .started {
