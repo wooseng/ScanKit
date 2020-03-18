@@ -9,7 +9,8 @@ target 'ScanKit' do
   pod 'Hue'
 
   pod 'LookinServer', :configurations => ['Debug']
-
+  pod 'MLeaksFinder', :configurations => ['Debug']
+  
 end
 
 target 'Sources' do
